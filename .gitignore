@@ -1,0 +1,11 @@
+.DS_Store
+
+/.idea/
+
+/node_modules/
+
+/test/
+
+/dist/
+
+yarn-error.log
