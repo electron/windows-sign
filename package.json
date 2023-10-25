@@ -1,5 +1,5 @@
 {
-  "name": "electron-windows-sign",
+  "name": "@electron/osx-sign",
   "version": "1.0.0",
   "description": "Codesign Electron Windows apps",
   "main": "dist/cjs/index.js",

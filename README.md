@@ -1,4 +1,4 @@
-# electron-windows-sign [![npm][npm_img]][npm_url]
+# @electron/osx-sign [![npm][npm_img]][npm_url]
 
 Codesign your app for Windows. Made for [Electron][electron] but really supports any folder with binary files. `electron-windows-sign` scans a folder for binary files (.exe, .msi, .dll, .node) and codesigns them with both SHA-1 and SHA-256. It can be used either programmatically or on the command line. 
 
@@ -9,7 +9,8 @@ By default, this module spawns `signtool.exe` and needs to run on Windows. If yo
 ## Usage
 
 ### As a module
-`electron-windows-codesign` is built to both esm and cjs.
+`electron-windows-codesign` is built to both esm and cjs. It supports multiple ways to sign an app:
+
 
 The short version:
 ```ts
