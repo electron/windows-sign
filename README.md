@@ -1,4 +1,4 @@
-# @electron/osx-sign [![npm][npm_img]][npm_url]
+# @electron/windows-sign [![npm][npm_img]][npm_url]
 
 Codesign your app for Windows. Made for [Electron][electron] but really supports any folder with binary files. `electron-windows-sign` scans a folder for [signable files](#file-types) and codesigns them with both SHA-1 and SHA-256. It can be highly customized and used either programmatically or on the command line. 
 
