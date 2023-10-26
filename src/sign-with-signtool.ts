@@ -79,7 +79,7 @@ async function execute(options: InternalOptions) {
   }
 }
 
-export async function sign(options: SignOptions) {
+export async function signWithSignTool(options: SignOptions) {
   const certificatePassword = options.certificatePassword || process.env.WINDOWS_CERTIFICATE_PASSWORD;
   const certificateFile = options.certificateFile || process.env.WINDOWS_CERTIFICATE_FILE;
   const signWithParams = options.signWithParams || process.env.WINDOWS_SIGN_WITH_PARAMS;
