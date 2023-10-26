@@ -2,73 +2,90 @@
 
 Codesign your app for Windows. Made for [Electron][electron] but really supports any folder with binary files. `electron-windows-sign` scans a folder for binary files (.exe, .msi, .dll, .node) and codesigns them with both SHA-1 and SHA-256. It can be used either programmatically or on the command line. 
 
-## Requirements
+# Requirements
 
 By default, this module spawns `signtool.exe` and needs to run on Windows. If you're building an Electron app and care enough to codesign them, I would heavily recommend that you build and test your apps on the platforms you're building for.
 
-## Usage
+# Usage
 
-### As a module
-`electron-windows-codesign` is built to both esm and cjs. It supports multiple ways to sign an app:
+`electron-windows-codesign` is built to both esm and cjs and can be used both as a module as well as directly from the command line. It supports multiple use cases for signing depending on your needs:
 
 
-The short version:
 ```ts
 import { sign } from "electron-windows-sign"
 // or const { sign } = require("electron-windows-sign")
 
-sign({ 
-  appDirectory: "C:\\Path\\To\\App",
-  certificateFile: "C:\\Cert.pfx", // or process.env.WINDOWS_CERTIFICATE_FILE
-  certificatePassword: "hunter99"  // or process.env.WINDOWS_CERTIFICATE_PASSWORD
-})
-  .then(() => console.log("Success!"))
-  .catch((error) => console.log(error))
+await sign(signOptions)
 ```
 
-The long version:
+```ps1
+electron-windows-sign $PATH_TO_APP_DIRECTORY [options ...]
+```
+
+## With a certificate file and password
+
+This is the "traditional" way to codesign Electron apps on Windows. You pass in a certificate file
+(like a .pfx) and a password, which will then be passed to a built-in version of `signtool.exe` taken
+directly from the Windows SDK. 
+
 ```ts
-import { sign, SignOptions } from "electron-windows-sign"
-
-const options: SignOptions = {
-  // Path to the application directory. We will scan this
-  // directory for any .dll, .exe, .msi, or .node files and
-  // codesign them with signtool.exe
+await sign({
   appDirectory: "C:\\Path\\To\\App",
-  // Path to a .pfx code signing certificate. Will use
-  // process.env.WINDOWS_CERTIFICATE_FILE if not provided.
-  certificateFile: "C:\\Path\\To\\App\\MyCert.pfx",
-
-  // --- Sometimes optional ---
-
-  // Password to said certificate. If you don't provide this,
-  // you need to provide a `signWithParams` option. Will use
-  // process.env.WINDOWS_CERTIFICATE_PASSWORD if not provided.
-  certificatePassword: string,
-  
-  // --- Options below are optional ---
-
-  // Path to a timestamp server. Defaults to http://timestamp.digicert.com
-  timestampServer = "http://timestamp.digicert.com"
-  // Description of the signed content. Will be passed to signtool.exe as /d
-  description = "My content"
-  // URL of the signed content. Will be passed to signtool.exe as /du
-  website = "https://mywebsite.com"
-  // Path to signtool.exe. Will use vendor/signtool.exe if not provided
-  signToolPath = "C:\\Path\\To\\signtool.exe"
-  // Additional parameters to pass to signtool.exe.
-  signWithParams = ""
-  // Enable debug logging
-  debug = true;
-  // Automatically select the best signing certificate, passed as 
-  // /a to signtool.exe, on by default
-  automaticallySelectCertificate = true
-}
-
-await sign(options)
+  // or process.env.WINDOWS_CERTIFICATE_FILE
+  certificateFile: "C:\\Cert.pfx",
+  // or process.env.WINDOWS_CERTIFICATE_PASSWORD 
+  certificatePassword: "hunter99"
+})
 ```
 
-### As a CLI tool
+```ps1
+electron-windows-sign $PATH_TO_APP_DIRECTORY --certificate-file=$PATH_TO_CERT --certificate-password=$CERT-PASSWORD
+``` 
+
+### Full configuration
+```
+// Path to a timestamp server. Defaults to http://timestamp.digicert.com
+// Can also be passed as process.env.WINDOWS_TIMESTAMP_SERVER
+timestampServer = "http://timestamp.digicert.com"
+// Description of the signed content. Will be passed to signtool.exe as /d
+// Can also be passed as process.env.WINDOWS_SIGN_DESCRIPTION
+description = "My content"
+// URL of the signed content. Will be passed to signtool.exe as /du
+// Can also be passed as process.env.WINDOWS_SIGN_WEBSITE
+website = "https://mywebsite.com"
+```
+
+## With a custom signtool.exe or custom parameters
+
+Sometimes, you need to specify specific signing parameters or use a different version
+of `signtool.exe`. In this mode, `@electron/windows-sign` will call the provided binary
+with the provided parameters for each file to sign. 
+
+If you only provide `signToolPath`, the default parameters will be used.
+If you only provide `signWithParams`, the default `signtool.exe` will be used. 
+
+All the [additional configuration](#additional-configuration) mentioned above is also
+available here, but only used if you do not provide your own parameters.
+
+```ts
+await sign({
+  appDirectory: "C:\\Path\\To\\App",
+  // or process.env.WINDOWS_CERTIFICATE_FILE
+  signToolPath: "C:\\Cert.pfx", 
+  // or process.env.WINDOWS_CERTIFICATE_PASSWORD
+  certificatePassword: "hunter99"
+  // or process.env.WINDOWS_SIGN_TOOL_PATH
+  signToolPath: "C:\\Path\\To\\my-custom-tool.exe",
+  // or process.env.WINDOWS_SIGN_WITH_PARAMS
+  signWithParams: "--my=custom --parameters"
+})
+```
+
+```ps1
+electron-windows-sign $PATH_TO_APP_DIRECTORY --sign-tool-path=$PATH_TO_TOOL --sign-with-params="--my=custom --parameters"
+```
+
+## As a CLI tool
 
 ```
 SYNOPSIS
@@ -114,6 +131,15 @@ DESCRIPTION
   debug
     Print additional debug information.
 ```
+
+# File Types
+PE files (.exe, .dll, .sys, .efi, .scr)
+Microsoft installers (.msi)
+APPX/MSIX packages (.appx, .appxbundle, .msix, .msixbundle)
+Catalog files (.cat)
+Cabinet files (.cab)
+Scripts (.js, .vbs, .wsf, .ps1)
+Silverlight applications (.xap)
 
 # License
 BSD 2-Clause "Simplified". Please see LICENSE for details.

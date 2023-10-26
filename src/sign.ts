@@ -9,7 +9,6 @@ const enum HASHES {
   sha1 = 'sha1',
   sha256 = 'sha256',
 }
-
 export interface SignOptions extends OptionalSignOptions {
   // Path to the application directory. We will scan this
   // directory for any .dll, .exe, .msi, or .node files and
@@ -112,6 +111,7 @@ function getSigntoolArgs(options: InternalOptions) {
 }
 
 const IS_BINARY_REGEX = /\.(exe|msi|dll|node)$/i;
+
 function getFilesToSign(dir: string) {
   // Array of file paths to sign
   const result: Array<string> = [];
@@ -154,7 +154,9 @@ export async function sign(options: SignOptions) {
   const certificateFile = options.certificateFile || process.env.WINDOWS_CERTIFICATE_FILE;
   const signWithParams = options.signWithParams || process.env.WINDOWS_SIGN_WITH_PARAMS;
   const timestampServer = options.timestampServer || process.env.WINDOWS_TIMESTAMP_SERVER || 'http://timestamp.digicert.com';
-  const signToolPath = options.signToolPath || process.env.WINDOWS_SIGNTOOL || path.join(__dirname, '../../vendor/signtool.exe');
+  const signToolPath = options.signToolPath || process.env.WINDOWS_SIGNTOOL_PATH || path.join(__dirname, '../../vendor/signtool.exe');
+  const description = options.description || process.env.WINDOWS_SIGN_DESCRIPTION;
+  const website = options.website || process.env.WINDOWS_SIGN_WEBSITE;
 
   if (options.debug) {
     enableDebugging();
@@ -178,7 +180,9 @@ export async function sign(options: SignOptions) {
     certificatePassword,
     signWithParams,
     signToolPath,
+    description,
     timestampServer,
+    website,
     files
   };
 
