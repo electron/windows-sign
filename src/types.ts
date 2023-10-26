@@ -43,7 +43,7 @@ export interface OptionalSignToolOptions {
   // Path to signtool.exe. Will use vendor/signtool.exe if not provided
   signToolPath?: string;
   // Additional parameters to pass to signtool.exe.
-  signWithParams?: string;
+  signWithParams?: string | Array<string>;
   // Enable debug logging
   debug?: boolean;
   // Automatically select the best signing certificate, passed as

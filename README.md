@@ -1,6 +1,6 @@
 # @electron/osx-sign [![npm][npm_img]][npm_url]
 
-Codesign your app for Windows. Made for [Electron][electron] but really supports any folder with binary files. `electron-windows-sign` scans a folder for binary files (.exe, .msi, .dll, .node) and codesigns them with both SHA-1 and SHA-256. It can be used either programmatically or on the command line. 
+Codesign your app for Windows. Made for [Electron][electron] but really supports any folder with binary files. `electron-windows-sign` scans a folder for [signable files](#file-types) and codesigns them with both SHA-1 and SHA-256. It can be highly customized and used either programmatically or on the command line. 
 
 # Requirements
 
@@ -8,8 +8,17 @@ By default, this module spawns `signtool.exe` and needs to run on Windows. If yo
 
 # Usage
 
-`electron-windows-codesign` is built to both esm and cjs and can be used both as a module as well as directly from the command line. It supports multiple use cases for signing depending on your needs:
+Most developers of Electron apps will likely not use this module directly - and instead use it indirectly
+instead. If you are one of those developers who is using a module like `@electron/forge` or `electron-packager`, you can configure this module with global environment variables. If that describes
+you, you can skip ahead to your use case:
 
+ - [With a certificate file and password](#with-a-certificate-file-and-password)
+ - [With a custom binary or custom parameters](#with-a-custom-signtoolexe-or-custom-parameters)
+ - [With a completely custom hook](#with-a-custom-hook-function)
+
+## Direct Usage
+
+`@electron/windows-codesign` is built to both esm and cjs and can be used both as a module as well as directly from the command line.
 
 ```ts
 import { sign } from "electron-windows-sign"
@@ -87,7 +96,57 @@ await sign({
 electron-windows-sign $PATH_TO_APP_DIRECTORY --sign-tool-path=$PATH_TO_TOOL --sign-with-params="--my=custom --parameters"
 ```
 
-## As a CLI tool
+## With a custom hook function
+
+Sometimes, you just want all modules depending on `@electron/windows-sign` to call
+your completely custom logic. You can either specify a `hookFunction` (if you're calling
+this module yourself) or a `hookModulePath`, which this module will attempt to require.
+
+Using the `hookModulePath` has the benefit that you can override how any other users
+of this module (like `electron-packager`) codesign your app.
+
+```ts
+await sign({
+  // A function with the following signature:
+  // (fileToSign: string) => void | Promise<void>
+  //
+  // This function will be called sequentially for each file that 
+  // @electron/windows-sign wants to sign.
+  hookFunction: myHookFunction
+  // Path to a hook module.
+  hookModulePath: "C:\\Path\\To\\my-hook-module.js",
+})
+```
+
+Your hook module should either directly export a function or
+export a `default` function.
+```js
+// Good:
+module.exports = function (filePath) {
+  console.log(`Path to file to sign: ${filePath}`)
+}
+
+// Good:
+module.exports = async function (filePath) {
+  console.log(`Path to file to sign: ${filePath}`)
+}
+
+// Good:
+export default async function (filePath) {
+  console.log(`Path to file to sign: ${filePath}`)
+}
+
+// Bad:
+module.exports = {
+  function (filePath) {
+  console.log(`Path to file to sign: ${filePath}`)
+}
+
+// Bad:
+export async function myCustomHookName(filePath) {
+  console.log(`Path to file to sign: ${filePath}`)
+}
+```
 
 ```
 SYNOPSIS

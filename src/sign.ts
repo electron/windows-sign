@@ -16,6 +16,7 @@ import { booleanFromEnv } from './utils/parse-env';
  */
 export async function sign(options: SignOptions) {
   const signJavaScript = options.signJavaScript || booleanFromEnv('WINDOWS_SIGN_JAVASCRIPT');
+  const hookModulePath = options.hookModulePath || process.env.WINDOWS_SIGN_HOOK_MODULE_PATH;
 
   if (options.debug) {
     enableDebugging();
@@ -27,11 +28,12 @@ export async function sign(options: SignOptions) {
   const internalOptions: InternalSignOptions = {
     ...options,
     signJavaScript,
+    hookModulePath,
     files
   };
 
   // If a hook is provides, sign with the hook
-  if (options.hookFunction || options.hookModulePath) {
+  if (internalOptions.hookFunction || internalOptions.hookModulePath) {
     log('Signing with hook');
     return signWithHook(internalOptions);
   }

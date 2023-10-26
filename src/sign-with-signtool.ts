@@ -56,8 +56,17 @@ function getSigntoolArgs(options: InternalSignToolOptions) {
   }
 
   if (options.signWithParams) {
-    // Split up at spaces and doublequotes
-    const extraArgs = options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>;
+    const extraArgs: Array<string> = [];
+
+    if (Array.isArray(options.signWithParams)) {
+      extraArgs.push(...options.signWithParams);
+    } else {
+      // Split up at spaces and doublequotes
+      extraArgs.push(...options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>);
+    }
+
+    log('Parsed signWithParams as:', extraArgs);
+
     args.push(...extraArgs);
   }
 

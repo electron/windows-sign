@@ -1,4 +1,4 @@
-import { signWithSignTool } from './sign-with-signtool';
-import { SignOptions } from './types';
+import { sign } from './sign';
+import { OptionalHookOptions, OptionalSignToolOptions, SignOptions } from './types';
 
-export { signWithSignTool as sign, SignOptions };
+export { sign, SignOptions, OptionalSignToolOptions, OptionalHookOptions };
