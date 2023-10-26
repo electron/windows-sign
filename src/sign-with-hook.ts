@@ -1,3 +1,4 @@
+import path from 'path';
 import { HookFunction, InternalHookOptions, InternalSignOptions } from './types';
 import { log } from './utils/log';
 
@@ -9,7 +10,7 @@ function getHookFunction(options: InternalHookOptions): HookFunction {
   }
 
   if (options.hookModulePath) {
-    const module = require(options.hookModulePath);
+    const module = require(path.resolve(options.hookModulePath));
 
     if (module.default) {
       return module.default;
@@ -28,9 +29,7 @@ function getHookFunction(options: InternalHookOptions): HookFunction {
 }
 
 export async function signWithHook(options: InternalSignOptions) {
-  if (!hookFunction) {
-    hookFunction = getHookFunction(options);
-  }
+  hookFunction = getHookFunction(options);
 
   for (const file of options.files) {
     try {

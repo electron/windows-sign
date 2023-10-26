@@ -53,7 +53,7 @@ export interface OptionalSignToolOptions {
   signJavaScript?: boolean
 }
 
-export type HookFunction = (fileToSign: string) => Promise<void>;
+export type HookFunction = (fileToSign: string) => void | Promise<void>;
 
 export interface OptionalHookOptions {
   // A hook function called for each file that needs
