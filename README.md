@@ -43,7 +43,7 @@ electron-windows-sign $PATH_TO_APP_DIRECTORY --certificate-file=$PATH_TO_CERT --
 ``` 
 
 ### Full configuration
-```
+```ts
 // Path to a timestamp server. Defaults to http://timestamp.digicert.com
 // Can also be passed as process.env.WINDOWS_TIMESTAMP_SERVER
 timestampServer = "http://timestamp.digicert.com"
@@ -53,6 +53,8 @@ description = "My content"
 // URL of the signed content. Will be passed to signtool.exe as /du
 // Can also be passed as process.env.WINDOWS_SIGN_WEBSITE
 website = "https://mywebsite.com"
+// If enabled, attempt to sign .js JavaScript files. Disabled by default
+signJavaScript = true
 ```
 
 ## With a custom signtool.exe or custom parameters
@@ -133,13 +135,20 @@ DESCRIPTION
 ```
 
 # File Types
-PE files (.exe, .dll, .sys, .efi, .scr)
-Microsoft installers (.msi)
-APPX/MSIX packages (.appx, .appxbundle, .msix, .msixbundle)
-Catalog files (.cat)
-Cabinet files (.cab)
-Scripts (.js, .vbs, .wsf, .ps1)
-Silverlight applications (.xap)
+This tool will aggressively attempt to sign all files that _can_
+be signed, excluding scripts.
+
+- [Portable executable files][pe] (.exe, .dll, .sys, .efi, .scr, .node)
+- Microsoft installers (.msi)
+- APPX/MSIX packages (.appx, .appxbundle, .msix, .msixbundle)
+- Catalog files (.cat)
+- Cabinet files (.cab)
+- Silverlight applications (.xap)
+- Scripts (.vbs, .wsf, .ps1)
+
+If you do want to sign JavaScript, please enable it with the `signJavaScript`
+parameter. As far as we are aware, there are no benefits to signing
+JavaScript files, so we do not by default.
 
 # License
 BSD 2-Clause "Simplified". Please see LICENSE for details.
@@ -148,3 +157,4 @@ BSD 2-Clause "Simplified". Please see LICENSE for details.
 [electron-windows-sign]: https://github.com/electron-windows-sign
 [npm_img]: https://img.shields.io/npm/v/electron-windows-sign.svg
 [npm_url]: https://npmjs.org/package/electron-windows-sign
+[pe]: https://en.wikipedia.org/wiki/Portable_Executable

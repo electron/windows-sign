@@ -1,55 +1,9 @@
 import path from 'path';
-import fs from 'fs-extra';
 import { enableDebugging, log } from './utils';
 import { spawnPromise } from './spawn';
-
-// SHA-1 has been deprecated on Windows since 2016. We'll still dualsign.
-// https://social.technet.microsoft.com/wiki/contents/articles/32288.windows-enforcement-of-sha1-certificates.aspx#Post-February_TwentySeventeen_Plan
-const enum HASHES {
-  sha1 = 'sha1',
-  sha256 = 'sha256',
-}
-export interface SignOptions extends OptionalSignOptions {
-  // Path to the application directory. We will scan this
-  // directory for any .dll, .exe, .msi, or .node files and
-  // codesign them with signtool.exe
-  appDirectory: string;
-  // Path to a .pfx code signing certificate. Will use
-  // process.env.WINDOWS_CERTIFICATE_FILE if not provided
-  certificateFile?: string;
-  // Password to said certificate. If you don't provide this,
-  // you need to provide a `signWithParams` option. Will use
-  // process.env.WINDOWS_CERTIFICATE_PASSWORD if not provided
-  certificatePassword?: string;
-}
-
-interface InternalOptions extends OptionalSignOptions {
-  certificateFile: string;
-  certificatePassword?: string;
-  signToolPath: string;
-  timestampServer: string;
-  files: Array<string>;
-  hash: HASHES;
-  appendSignature?: boolean;
-}
-
-interface OptionalSignOptions {
-  // Path to a timestamp server. Defaults to http://timestamp.digicert.com
-  timestampServer?: string;
-  // Description of the signed content. Will be passed to signtool.exe as /d
-  description?: string;
-  // URL of the signed content. Will be passed to signtool.exe as /du
-  website?: string;
-  // Path to signtool.exe. Will use vendor/signtool.exe if not provided
-  signToolPath?: string;
-  // Additional parameters to pass to signtool.exe.
-  signWithParams?: string;
-  // Enable debug logging
-  debug?: boolean;
-  // Automatically select the best signing certificate, passed as
-  // /a to signtool.exe, on by default
-  automaticallySelectCertificate?: boolean;
-}
+import { getFilesToSign } from './files';
+import { HASHES, InternalOptions, SignOptions } from './types';
+import { booleanFromEnv } from './utils/parse-env';
 
 function getSigntoolArgs(options: InternalOptions) {
   // See the following url for docs
@@ -110,30 +64,6 @@ function getSigntoolArgs(options: InternalOptions) {
   return args;
 }
 
-const IS_BINARY_REGEX = /\.(exe|msi|dll|node)$/i;
-
-function getFilesToSign(dir: string) {
-  // Array of file paths to sign
-  const result: Array<string> = [];
-
-  // Iterate over the app directory, looking for files to sign
-  const files = fs.readdirSync(dir);
-
-  for (const file of files) {
-    const fullPath = path.resolve(dir, file);
-
-    if (fs.statSync(fullPath).isDirectory()) {
-      // If it's a directory, recurse
-      result.push(...getFilesToSign(fullPath));
-    } else if (IS_BINARY_REGEX.test(file)) {
-      // If it's a binary, add it to the list
-      result.push(fullPath);
-    }
-  }
-
-  return result;
-}
-
 async function execute(options: InternalOptions) {
   const { signToolPath, files } = options;
   const args = getSigntoolArgs(options);
@@ -157,6 +87,7 @@ export async function sign(options: SignOptions) {
   const signToolPath = options.signToolPath || process.env.WINDOWS_SIGNTOOL_PATH || path.join(__dirname, '../../vendor/signtool.exe');
   const description = options.description || process.env.WINDOWS_SIGN_DESCRIPTION;
   const website = options.website || process.env.WINDOWS_SIGN_WEBSITE;
+  const signJavaScript = options.signJavaScript || booleanFromEnv('WINDOWS_SIGN_JAVASCRIPT');
 
   if (options.debug) {
     enableDebugging();
@@ -172,7 +103,7 @@ export async function sign(options: SignOptions) {
     throw new Error('You must provide a certificatePassword or signing parameters');
   }
 
-  const files = getFilesToSign(options.appDirectory);
+  const files = getFilesToSign(options);
 
   const internalOptions = {
     ...options,
@@ -183,6 +114,7 @@ export async function sign(options: SignOptions) {
     description,
     timestampServer,
     website,
+    signJavaScript,
     files
   };
 

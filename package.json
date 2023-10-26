@@ -50,7 +50,7 @@
   },
   "scripts": {
     "build": "tsc && tsc -p tsconfig.esm.json",
-    "lint": "eslint --ext .ts,.js src bin test",
+    "lint": "eslint --ext .ts,.js src bin",
     "prepublishOnly": "yarn build"
   },
   "engines": {
