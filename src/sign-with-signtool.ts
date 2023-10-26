@@ -1,11 +1,9 @@
 import path from 'path';
-import { enableDebugging, log } from './utils';
+import { log } from './utils/log';
 import { spawnPromise } from './spawn';
-import { getFilesToSign } from './files';
-import { HASHES, InternalOptions, SignOptions } from './types';
-import { booleanFromEnv } from './utils/parse-env';
+import { HASHES, InternalSignOptions, InternalSignToolOptions } from './types';
 
-function getSigntoolArgs(options: InternalOptions) {
+function getSigntoolArgs(options: InternalSignToolOptions) {
   // See the following url for docs
   // https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
   const { certificateFile, certificatePassword, hash, timestampServer } = options;
@@ -30,7 +28,9 @@ function getSigntoolArgs(options: InternalOptions) {
   }
 
   // Certificate file
-  args.push('/f', path.resolve(certificateFile));
+  if (certificateFile) {
+    args.push('/f', path.resolve(certificateFile));
+  }
 
   // Certificate password
   if (certificatePassword) {
@@ -64,7 +64,7 @@ function getSigntoolArgs(options: InternalOptions) {
   return args;
 }
 
-async function execute(options: InternalOptions) {
+async function execute(options: InternalSignToolOptions) {
   const { signToolPath, files } = options;
   const args = getSigntoolArgs(options);
 
@@ -79,7 +79,7 @@ async function execute(options: InternalOptions) {
   }
 }
 
-export async function signWithSignTool(options: SignOptions) {
+export async function signWithSignTool(options: InternalSignOptions) {
   const certificatePassword = options.certificatePassword || process.env.WINDOWS_CERTIFICATE_PASSWORD;
   const certificateFile = options.certificateFile || process.env.WINDOWS_CERTIFICATE_FILE;
   const signWithParams = options.signWithParams || process.env.WINDOWS_SIGN_WITH_PARAMS;
@@ -87,23 +87,14 @@ export async function signWithSignTool(options: SignOptions) {
   const signToolPath = options.signToolPath || process.env.WINDOWS_SIGNTOOL_PATH || path.join(__dirname, '../../vendor/signtool.exe');
   const description = options.description || process.env.WINDOWS_SIGN_DESCRIPTION;
   const website = options.website || process.env.WINDOWS_SIGN_WEBSITE;
-  const signJavaScript = options.signJavaScript || booleanFromEnv('WINDOWS_SIGN_JAVASCRIPT');
 
-  if (options.debug) {
-    enableDebugging();
+  if (!certificateFile && !(signWithParams || signToolPath)) {
+    throw new Error('You must provide a certificateFile and a signToolPath or signing parameters');
   }
 
-  log('electron-windows-codesign called with options', { options });
-
-  if (!certificateFile) {
-    throw new Error('You must provide a certificateFile');
-  }
-
-  if (!signWithParams && !certificatePassword) {
+  if (!signToolPath && !signWithParams && !certificatePassword) {
     throw new Error('You must provide a certificatePassword or signing parameters');
   }
-
-  const files = getFilesToSign(options);
 
   const internalOptions = {
     ...options,
@@ -113,9 +104,7 @@ export async function signWithSignTool(options: SignOptions) {
     signToolPath,
     description,
     timestampServer,
-    website,
-    signJavaScript,
-    files
+    website
   };
 
   await execute({ ...internalOptions, hash: HASHES.sha1 });

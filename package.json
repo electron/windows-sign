@@ -34,19 +34,19 @@
     "minimist": "^1.2.8"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.8",
-    "@types/fs-extra": "^11.0.1",
-    "@types/node": "^16.11.6",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "@typescript-eslint/parser": "^5.45.0",
-    "eslint": "^8.29.0",
-    "eslint-config-eslint": "^7.0.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
+    "@types/debug": "^4.1.10",
+    "@types/fs-extra": "^11.0.3",
+    "@types/node": "^18.18.7",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.52.0",
+    "eslint-config-eslint": "^9.0.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "standard": "^17.0.0",
-    "typescript": "^5.0.4"
+    "standard": "^17.1.0",
+    "typescript": "^5.2.2"
   },
   "scripts": {
     "build": "tsc && tsc -p tsconfig.esm.json",
@@ -54,6 +54,6 @@
     "prepublishOnly": "yarn build"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=18.0.0"
   }
 }

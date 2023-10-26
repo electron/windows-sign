@@ -1,5 +1,5 @@
 import { SpawnOptions } from 'child_process';
-import { log } from './utils';
+import { log } from './utils/log';
 
 export interface SpawnPromiseResult {
   stdout: string;
