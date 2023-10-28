@@ -21,8 +21,8 @@ you, you can skip ahead to your use case:
 `@electron/windows-codesign` is built to both esm and cjs and can be used both as a module as well as directly from the command line.
 
 ```ts
-import { sign } from "electron-windows-sign"
-// or const { sign } = require("electron-windows-sign")
+import { sign } from "@electron/windows-sign"
+// or const { sign } = require("@electron/windows-sign")
 
 await sign(signOptions)
 ```
@@ -213,7 +213,6 @@ JavaScript files, so we do not by default.
 BSD 2-Clause "Simplified". Please see LICENSE for details.
 
 [electron]: https://github.com/electron/electron
-[electron-windows-sign]: https://github.com/electron-windows-sign
 [npm_img]: https://img.shields.io/npm/v/electron-windows-sign.svg
 [npm_url]: https://npmjs.org/package/electron-windows-sign
 [pe]: https://en.wikipedia.org/wiki/Portable_Executable
