@@ -1,0 +1,47 @@
+version: 2.1
+
+orbs:
+  cfa: continuousauth/npm@1.0.2
+  node: electronjs/node@2.1.0
+
+workflows:
+  test_and_release:
+    # Run the test jobs first, then the release only when all the test jobs are successful
+    jobs:
+      - node/test:
+          name: test-<< matrix.executor >>-<< matrix.node-version >>
+          test-steps:
+            - run: yarn lint
+            - when:
+                condition:
+                  matches:
+                    pattern: "^20\\."
+                    value: << matrix.node-version >>
+                steps:
+                  - run: yarn test
+            - when:
+              - not:
+                  condition:
+                    matches:
+                      pattern: "^20\\."
+                      value: << matrix.node-version >>
+                  steps:
+                    - run: yarn test:loader
+          use-test-steps: true
+          matrix:
+            alias: test
+            parameters:
+              executor:
+                - node/windows
+              node-version:
+                - '20.9'
+                - '18.17'
+                - '16.20'
+      - cfa/release:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - main
+          context: cfa-release
