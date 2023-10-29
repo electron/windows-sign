@@ -213,6 +213,6 @@ JavaScript files, so we do not by default.
 BSD 2-Clause "Simplified". Please see LICENSE for details.
 
 [electron]: https://github.com/electron/electron
-[npm_img]: https://img.shields.io/npm/v/electron-windows-sign.svg
-[npm_url]: https://npmjs.org/package/electron-windows-sign
+[npm_img]: https://img.shields.io/npm/v/@electron/windows-sign.svg
+[npm_url]: https://npmjs.org/package/@electron/windows-sign
 [pe]: https://en.wikipedia.org/wiki/Portable_Executable
