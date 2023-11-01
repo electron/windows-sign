@@ -18,11 +18,11 @@ workflows:
                 steps:
                   - run: yarn test
             - when:
-              - not:
-                  condition:
-                    equal: [ '20.9', << matrix.node-version >> ]
-                  steps:
-                    - run: yarn test:loader
+                condition:
+                  - not:
+                      equal: [ '20.9', << matrix.node-version >> ]
+                steps:
+                  - run: yarn test:loader
           use-test-steps: true
           matrix:
             alias: test
