@@ -9,7 +9,7 @@ By default, this module spawns `signtool.exe` and needs to run on Windows. If yo
 # Usage
 
 Most developers of Electron apps will likely not use this module directly - and instead use it indirectly
-instead. If you are one of those developers who is using a module like `@electron/forge` or `electron-packager`, you can configure this module with global environment variables. If that describes
+instead. If you are one of those developers who is using a module like `@electron/forge` or `@electron/packager`, you can configure this module with global environment variables. If that describes
 you, you can skip ahead to your use case:
 
  - [With a certificate file and password](#with-a-certificate-file-and-password)
@@ -103,7 +103,7 @@ your completely custom logic. You can either specify a `hookFunction` (if you're
 this module yourself) or a `hookModulePath`, which this module will attempt to require.
 
 Using the `hookModulePath` has the benefit that you can override how any other users
-of this module (like `electron-packager`) codesign your app.
+of this module (like `@electron/packager`) codesign your app.
 
 ```ts
 await sign({
