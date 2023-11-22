@@ -34,7 +34,6 @@
     "minimist": "^1.2.8"
   },
   "devDependencies": {
-    "@continuous-auth/semantic-release-npm": "^3.0.0",
     "@types/debug": "^4.1.10",
     "@types/fs-extra": "^11.0.3",
     "@types/node": "^18.18.7",
