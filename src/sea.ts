@@ -68,7 +68,7 @@ const { sign } = require('@electron/windows-sign');
 const fs = require('fs-extra');
 const path = require('path');
 
-const logPath = path.join(__dirname, 'windows-sign-log.txt');
+const logPath = path.join(__dirname, 'electron-windows-sign.log');
 const options = JSON.parse(process.argv[2]);
 const signArgv = JSON.parse(process.argv[3]);
 const files = signArgv.slice(-1);
