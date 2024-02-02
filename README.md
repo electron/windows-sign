@@ -49,7 +49,7 @@ await sign({
 
 ```ps1
 electron-windows-sign $PATH_TO_APP_DIRECTORY --certificate-file=$PATH_TO_CERT --certificate-password=$CERT-PASSWORD
-``` 
+```
 
 ### Full configuration
 ```ts
@@ -138,8 +138,9 @@ export default async function (filePath) {
 
 // Bad:
 module.exports = {
-  function (filePath) {
-  console.log(`Path to file to sign: ${filePath}`)
+  myCustomHookName: function (filePath) {
+    console.log(`Path to file to sign: ${filePath}`)
+  }
 }
 
 // Bad:

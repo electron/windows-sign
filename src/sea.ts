@@ -5,16 +5,16 @@ import postject from 'postject';
 
 import { spawnPromise } from './spawn';
 import { log } from './utils/log';
+import { SignToolOptions } from './types';
 
 interface SeaOptions {
   // Full path to the sea. Needs to end with .exe
   path: string
-  // Path to a script that can be `node` called to by the
-  // single executable app.
-  receiver: string;
   // Optional: A binary to use. Will use the current executable
   // (process.execPath) by default.
   bin?: string;
+  // Sign options
+  windowsSign: SignToolOptions
 }
 
 interface InternalSeaOptions extends Required<SeaOptions> {
@@ -25,20 +25,64 @@ interface InternalSeaOptions extends Required<SeaOptions> {
 const FILENAMES = {
   SEA_CONFIG: 'sea-config.json',
   SEA_MAIN: 'sea.js',
-  SEA_BLOB: 'sea.blob'
+  SEA_BLOB: 'sea.blob',
+  SEA_RECEIVER: 'receiver.cjs'
 };
 
 const SEA_MAIN_SCRIPT = `
-const bin = "%PATH_TO_BIN%"
-const script = "%PATH_TO_SCRIPT%"
+const bin = "%PATH_TO_BIN%";
+const script = "%PATH_TO_SCRIPT%";
+const options = JSON.parse(\`
+%WINDOWS_SIGN_OPTIONS%
+\`.trim())
 
 const { spawnSync } = require('child_process');
 
 function main() {
-  spawnSync(bin, [ script, process.argv.slice(1) ]);
+  console.log("@electron/windows-sign sea");
+  console.log({ bin, script });
+
+  try {
+    const spawn = spawnSync(
+      bin,
+      [ script, JSON.stringify(options), JSON.stringify(process.argv.slice(1)) ],
+      { stdio: ['inherit', 'inherit', 'pipe'] }
+    );
+
+    const stderr = spawn.stderr.toString().trim();
+
+    if (stderr) {
+      throw new Error(stderr);
+    }
+  } catch (error) {
+    process.exitCode = 1;
+    throw new Error(error);
+  }
 }
 
 main();
+`;
+
+const SEA_RECEIVER_SCRIPT = `
+const { sign } = require('@electron/windows-sign');
+const fs = require('fs-extra');
+const path = require('path');
+
+const logPath = path.join(__dirname, 'windows-sign-log.txt');
+const options = JSON.parse(process.argv[2]);
+const signArgv = JSON.parse(process.argv[3]);
+const files = signArgv.slice(-1);
+
+fs.appendFileSync(logPath, \`\\n\${files}\`);
+sign({ ...options, files })
+  .then((result) => {
+    fs.appendFileSync(logPath, \`\\n\${result}\`);
+    console.log(\`Successfully signed \${files}\`, result);
+  })
+  .catch((error) => {
+    fs.appendFileSync(logPath, \`\\n\${error}\`);
+    throw new Error(error);
+  });
 `;
 
 /**
@@ -57,13 +101,22 @@ export async function createSeaSignTool(options: Partial<SeaOptions> = {}): Prom
   await createFiles(requiredOptions);
   await createBlob(requiredOptions);
   await createBinary(requiredOptions);
+  await createSeaReceiver(requiredOptions);
   await cleanup(requiredOptions);
 
   return requiredOptions;
 }
 
+async function createSeaReceiver(options: InternalSeaOptions) {
+  const receiverPath = path.join(options.dir, FILENAMES.SEA_RECEIVER);
+
+  await fs.ensureFile(receiverPath);
+  await fs.writeFile(receiverPath, SEA_RECEIVER_SCRIPT);
+}
+
 async function createFiles(options: InternalSeaOptions) {
-  const { dir, bin, receiver } = options;
+  const { dir, bin } = options;
+  const receiverPath = path.join(options.dir, FILENAMES.SEA_RECEIVER);
 
   // sea-config.json
   await fs.outputJSON(path.join(dir, FILENAMES.SEA_CONFIG), {
@@ -75,10 +128,11 @@ async function createFiles(options: InternalSeaOptions) {
   });
 
   // signtool.js
-  const pathToBin = bin || process.execPath;
+  const binPath = bin || process.execPath;
   const script = SEA_MAIN_SCRIPT
-    .replace('%PATH_TO_BIN%', escapeMaybe(pathToBin))
-    .replace('%PATH_TO_SCRIPT%', escapeMaybe(receiver));
+    .replace('%PATH_TO_BIN%', escapeMaybe(binPath))
+    .replace('%PATH_TO_SCRIPT%', escapeMaybe(receiverPath))
+    .replace('%WINDOWS_SIGN_OPTIONS%', JSON.stringify(options.windowsSign));
 
   await fs.outputFile(path.join(dir, FILENAMES.SEA_MAIN), script);
 }
@@ -148,8 +202,8 @@ async function getOptions(options: Partial<SeaOptions>): Promise<InternalSeaOpti
     cloned.bin = process.execPath;
   }
 
-  if (!cloned.receiver) {
-    throw new Error('Tried to generate a single executable application without a "receiver" script.');
+  if (!cloned.windowsSign) {
+    throw new Error('Did not find windowsSign options, which are required');
   }
 
   return {
@@ -157,7 +211,7 @@ async function getOptions(options: Partial<SeaOptions>): Promise<InternalSeaOpti
     dir: path.dirname(cloned.path),
     filename: path.basename(cloned.path),
     bin: cloned.bin,
-    receiver: cloned.receiver
+    windowsSign: cloned.windowsSign
   };
 }
 
