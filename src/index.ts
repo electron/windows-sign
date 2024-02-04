@@ -1,4 +1,5 @@
 import { sign } from './sign';
-import { OptionalHookOptions, OptionalSignToolOptions, SignOptions } from './types';
+import { createSeaSignTool } from './sea';
+import { OptionalHookOptions, OptionalSignToolOptions, SignOptions, SignToolOptions } from './types';
 
-export { sign, SignOptions, OptionalSignToolOptions, OptionalHookOptions };
+export { sign, SignOptions, SignToolOptions, OptionalSignToolOptions, OptionalHookOptions, createSeaSignTool };

@@ -5,16 +5,25 @@ export const enum HASHES {
   sha256 = 'sha256',
 }
 
-export interface SignOptions extends OptionalSignToolOptions, OptionalHookOptions {
+export type SignOptions = SignOptionsForDirectory | SignOptionsForFiles
+
+export interface SignOptionsForDirectory extends SignToolOptions {
   // Path to the application directory. We will scan this
   // directory for any .dll, .exe, .msi, or .node files and
   // codesign them with signtool.exe
   appDirectory: string;
 }
 
-export interface InternalSignOptions extends SignOptions {
+export interface SignOptionsForFiles extends SignToolOptions {
+  // Path to files to be signed.
   files: Array<string>;
 }
+
+export interface SignToolOptions extends OptionalSignToolOptions, OptionalHookOptions {
+
+}
+
+export interface InternalSignOptions extends SignOptionsForFiles {}
 
 export interface InternalSignToolOptions extends OptionalSignToolOptions, OptionalHookOptions {
   certificateFile?: string;

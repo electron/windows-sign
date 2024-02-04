@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 
-import { SignOptions } from './types';
+import { SignOptions, SignOptionsForFiles } from './types';
 
 const IS_PE_REGEX = /\.(exe|dll|sys|efi|scr|node)$/i;
 const IS_MSI_REGEX = /\.msi$/i;
@@ -26,6 +26,10 @@ const IS_JS_REGEX = /\.js$/i;
  * - JavaScript files (.js)
  */
 export function getFilesToSign(options: SignOptions, dir?: string): Array<string> {
+  if (isSignOptionsForFiles(options)) {
+    return options.files;
+  }
+
   dir = dir || options.appDirectory;
 
   // Array of file paths to sign
@@ -60,4 +64,8 @@ export function getFilesToSign(options: SignOptions, dir?: string): Array<string
   }
 
   return result;
+}
+
+function isSignOptionsForFiles(input: SignOptions): input is SignOptionsForFiles {
+  return !!(input as SignOptionsForFiles).files;
 }
