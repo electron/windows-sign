@@ -1,3 +1,4 @@
+import { getDirname } from 'cross-dirname';
 import path from 'path';
 import os from 'os';
 import fs from 'fs-extra';
@@ -22,19 +23,29 @@ interface InternalSeaOptions extends Required<SeaOptions> {
   filename: string
 }
 
+/**
+ * cross-dir uses new Error() stacks
+ * to figure out our directory in a way
+ * that's somewhat cross-compatible.
+ *
+ * We can't just use __dirname because it's
+ * undefined in ESM - and we can't use import.meta.url
+ * because TypeScript won't allow usage unless you're
+ * _only_ compiling for ESM.
+ */
+export const DIRNAME = getDirname();
+
 const FILENAMES = {
   SEA_CONFIG: 'sea-config.json',
   SEA_MAIN: 'sea.js',
   SEA_BLOB: 'sea.blob',
-  SEA_RECEIVER: 'receiver.cjs'
+  SEA_RECEIVER: 'receiver.mjs'
 };
 
 const SEA_MAIN_SCRIPT = `
 const bin = "%PATH_TO_BIN%";
 const script = "%PATH_TO_SCRIPT%";
-const options = JSON.parse(\`
-%WINDOWS_SIGN_OPTIONS%
-\`.trim())
+const options = %WINDOWS_SIGN_OPTIONS%
 
 const { spawnSync } = require('child_process');
 
@@ -64,11 +75,11 @@ main();
 `;
 
 const SEA_RECEIVER_SCRIPT = `
-const { sign } = require('@electron/windows-sign');
-const fs = require('fs-extra');
-const path = require('path');
+import { sign } from '@electron/windows-sign';
+import fs from 'fs-extra';
+import path from 'path';
 
-const logPath = path.join(__dirname, 'electron-windows-sign.log');
+const logPath = path.join('electron-windows-sign.log');
 const options = JSON.parse(process.argv[2]);
 const signArgv = JSON.parse(process.argv[3]);
 const files = signArgv.slice(-1);
@@ -159,7 +170,7 @@ async function createBinary(options: InternalSeaOptions) {
   await fs.copyFile(process.execPath, seaPath);
 
   // Remove the Node signature
-  const signtool = path.join(__dirname, '../../vendor/signtool.exe');
+  const signtool = path.join(DIRNAME, '../../vendor/signtool.exe');
   await spawnPromise(signtool, [
     'remove',
     '/s',
@@ -195,7 +206,7 @@ async function getOptions(options: Partial<SeaOptions>): Promise<InternalSeaOpti
 
   if (!cloned.path) {
     cloned.path = path.join(os.homedir(), '.electron', 'windows-sign', 'sea.exe');
-    await fs.mkdirp(cloned.path);
+    await fs.ensureFile(cloned.path);
   }
 
   if (!cloned.bin) {
