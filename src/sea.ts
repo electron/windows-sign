@@ -155,9 +155,12 @@ async function createBlob(options: InternalSeaOptions) {
 
   log(`Calling ${bin} with options:`, args);
 
-  return spawnPromise(bin, args, {
+  const { stderr, stdout } = await spawnPromise(bin, args, {
     cwd
   });
+
+  log('stdout:', stdout);
+  log('stderr:', stderr);
 }
 
 async function createBinary(options: InternalSeaOptions) {
@@ -233,17 +236,8 @@ function checkCompatibility() {
   const version = process.versions.node;
   const split = version.split('.');
   const major = parseInt(split[0], 10);
-  const minor = parseInt(split[1], 10);
 
   if (major >= 20) {
-    return true;
-  }
-
-  if (major === 19 && minor >= 7) {
-    return true;
-  }
-
-  if (major === 18 && minor >= 16) {
     return true;
   }
 
