@@ -82,7 +82,7 @@ available here, but only used if you do not provide your own parameters.
 await sign({
   appDirectory: "C:\\Path\\To\\App",
   // or process.env.WINDOWS_CERTIFICATE_FILE
-  signToolPath: "C:\\Cert.pfx", 
+  certificateFile: "C:\\Cert.pfx", 
   // or process.env.WINDOWS_CERTIFICATE_PASSWORD
   certificatePassword: "hunter99"
   // or process.env.WINDOWS_SIGN_TOOL_PATH
