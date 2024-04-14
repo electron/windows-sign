@@ -25,7 +25,7 @@ export interface SignToolOptions extends OptionalSignToolOptions, OptionalHookOp
 
 export interface InternalSignOptions extends SignOptionsForFiles {}
 
-export interface InternalSignToolOptions extends OptionalSignToolOptions, OptionalHookOptions {
+export interface InternalSignToolOptions extends OptionalSignToolOptions, Omit<OptionalHookOptions, 'hashes'> {
   certificateFile?: string;
   certificatePassword?: string;
   signToolPath: string;
@@ -60,8 +60,8 @@ export interface OptionalSignToolOptions {
   automaticallySelectCertificate?: boolean;
   // Should we sign JavaScript files? Defaults to false
   signJavaScript?: boolean
-  // Which hash algorithm to use. If unspecified, sign twice with sha1 and sha256
-  hash?: HASHES;
+  // Which hash algorithm to use. If unspecified the default is ["sha1", "sha256"]
+  hashes?: HASHES[];
 }
 
 export type HookFunction = (fileToSign: string) => void | Promise<void>;
