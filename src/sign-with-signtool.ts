@@ -119,6 +119,10 @@ export async function signWithSignTool(options: InternalSignOptions) {
     website
   };
 
-  await execute({ ...internalOptions, hash: HASHES.sha1 });
-  await execute({ ...internalOptions, hash: HASHES.sha256, appendSignature: true });
+  if (options.hash == null || options.hash === HASHES.sha1) {
+    await execute({ ...internalOptions, hash: HASHES.sha1 });
+  }
+  if (options.hash == null || options.hash === HASHES.sha256) {
+    await execute({ ...internalOptions, hash: HASHES.sha256, appendSignature: true });
+  }
 }

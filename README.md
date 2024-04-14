@@ -64,6 +64,8 @@ description = "My content"
 website = "https://mywebsite.com"
 // If enabled, attempt to sign .js JavaScript files. Disabled by default
 signJavaScript = true
+// If unspecified, both sha1 and sha256 signatures will be appended. Will be passed to signtool.exe as the /fd option.
+hash = "sha256" 
 ```
 
 ## With a custom signtool.exe or custom parameters

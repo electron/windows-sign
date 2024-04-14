@@ -60,6 +60,8 @@ export interface OptionalSignToolOptions {
   automaticallySelectCertificate?: boolean;
   // Should we sign JavaScript files? Defaults to false
   signJavaScript?: boolean
+  // Which hash algorithm to use. If unspecified, sign twice with sha1 and sha256
+  hash?: HASHES;
 }
 
 export type HookFunction = (fileToSign: string) => void | Promise<void>;
