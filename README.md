@@ -85,7 +85,7 @@ await sign({
   certificateFile: "C:\\Cert.pfx", 
   // or process.env.WINDOWS_CERTIFICATE_PASSWORD
   certificatePassword: "hunter99",
-  // or process.env.WINDOWS_SIGN_TOOL_PATH
+  // or process.env.WINDOWS_SIGNTOOL_PATH
   signToolPath: "C:\\Path\\To\\my-custom-tool.exe",
   // or process.env.WINDOWS_SIGN_WITH_PARAMS
   signWithParams: "--my=custom --parameters"
