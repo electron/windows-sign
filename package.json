@@ -50,10 +50,12 @@
     "globstar": "^1.0.0",
     "standard": "^17.1.0",
     "tsx": "^3.14.0",
+    "typedoc": "~0.25.13",
     "typescript": "^5.2.2"
   },
   "scripts": {
     "build": "tsc && tsc -p tsconfig.esm.json",
+    "docs": "npx typedoc",
     "lint": "eslint --ext .ts,.js src bin test",
     "test:loader": "globstar -- node --loader tsx --test \"test/**/*.spec.ts\"",
     "test": "globstar -- node --import tsx --test \"test/**/*.spec.ts\"",

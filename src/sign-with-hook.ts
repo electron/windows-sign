@@ -32,7 +32,6 @@ function getHookFunction(options: InternalHookOptions): HookFunction {
  * Sign with a hook function, basically letting everyone
  * write completely custom sign logic
  *
- * @export
  * @param {InternalSignOptions} options
  */
 export async function signWithHook(options: InternalSignOptions) {
