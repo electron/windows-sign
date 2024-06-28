@@ -13,6 +13,8 @@ import { booleanFromEnv } from './utils/parse-env';
  *
  * @param options
  * @returns {Promise<void>}
+ *
+ * @category Sign
  */
 export async function sign(options: SignOptions) {
   const signJavaScript = options.signJavaScript || booleanFromEnv('WINDOWS_SIGN_JAVASCRIPT');
