@@ -115,14 +115,24 @@ export interface OptionalSignToolOptions {
   signJavaScript?: boolean;
 }
 
-/**
- * Custom function that is called sequentially for each file that needs to be signed.
- *
- * @param fileToSign Absolute path to the file to sign
- *
- * @category Utility
- */
-export type HookFunction = (fileToSign: string) => void | Promise<void>;
+export type HookFunction = {
+  /**
+   * Custom function that is called sequentially for each file that needs to be signed.
+   *
+   * @param fileToSign Absolute path to the file to sign
+   *
+   * @category Utility
+   */
+  (fileToSign: string) : void | Promise<void>
+  /**
+   * Custom function that is called once，passed origin sign options.
+   *
+   * @param options Origin sign options with filtered files.
+   *
+   * @category Utility
+   */
+  (options: InternalSignOptions) : void | Promise<void>
+}
 
 /**
  * @category Utility
@@ -140,6 +150,11 @@ export interface OptionalHookOptions {
    * `@electron/windows-sign` will not attempt to sign with SignTool if a custom hook is detected.
    */
   hookModulePath?: string;
+  /**
+   * Do not iterate files which need to be signed. If true,
+   * it will call hookFunction one-time with origin sign options.
+   */
+  noIterateFiles?: boolean;
 }
 
 export interface InternalHookOptions extends OptionalHookOptions {
