@@ -219,6 +219,7 @@ Since 2023, Microsoft requires that Windows software be signed with an extended 
 The industry has an answer to this problem: Services like Digicert Keylocker, AWS CloudHSM, Azure Key Vault HSM, or Google Cloud Key Management Service HSM allow code signing binaries with an Extended Validation (EV) certificate from the cloud. `@electron/windows-sign` is compatible with all of these services. 
 
 ## Custom signtool parameters
+
 Most services allow signing your code with Microsoft's `signtool.exe`. Let's take Digicert Keylocker as an example. [Digicert's documentation](https://docs.digicert.com/en/digicert-keylocker/signing-tools/sign-authenticode-files-with-signtool-on-windows.html) explains the steps necessary to setup your signing machine. Once done, you can sign with the following call:
 
 ```
