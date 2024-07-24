@@ -232,7 +232,6 @@ To sign with `@electron/windows-sign` using those instructions, you would take t
 await sign({
   signWithParams: "/csp "DigiCert Signing Manager KSP" /kc <keypair_alias> /f <certificate_file> /tr http://timestamp.digicert.com /td SHA256 /fd SHA256"
 })
-
 Both Google's and Amazon's solutions similarly allow you to sign with Microsoft's SignTool. Documentation for [Google can be found here](https://cloud.google.com/kms/docs/reference/cng-signtool), [Amazon's lives here](https://docs.aws.amazon.com/cloudhsm/latest/userguide/signtool.html). 
 
 ## Custom signtool.exe
