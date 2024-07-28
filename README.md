@@ -2,7 +2,7 @@
 
 Codesign your app for Windows. Made for [Electron][electron] but really supports any folder with binary files. `electron-windows-sign` scans a folder for [signable files](#file-types) and codesigns them with both SHA-1 and SHA-256. It can be highly customized and used either programmatically or on the command line. 
 
-This tool is particularly useful if you want to code sign Electron or other Windows binaries with an EV certificate or an HSM setup (like DigiCert KeyLocker, AWS CloudHSM, Azure Key Vault HSM, Google Cloud Key Management Service HSM, and other similar services). For more details on how you'd exactly do that, please see 
+This tool is particularly useful if you want to code sign Electron or other Windows binaries with an EV certificate or an HSM setup (like DigiCert KeyLocker, AWS CloudHSM, Azure Key Vault HSM, Google Cloud Key Management Service HSM, and other similar services). For more details on how you'd exactly do that, please see [Use with Cloud HSM Providers](#use-with-cloud-hsm-providers) below.
 
 # Requirements
 
@@ -230,24 +230,27 @@ To sign with `@electron/windows-sign` using those instructions, you would take t
 
 ```js
 await sign({
-  signWithParams: "/csp "DigiCert Signing Manager KSP" /kc <keypair_alias> /f <certificate_file> /tr http://timestamp.digicert.com /td SHA256 /fd SHA256"
+  signWithParams: "/csp \"DigiCert Signing Manager KSP\" /kc <keypair_alias> /f <certificate_file> /tr http://timestamp.digicert.com /td SHA256 /fd SHA256"
 })
+```
+
 Both Google's and Amazon's solutions similarly allow you to sign with Microsoft's SignTool. Documentation for [Google can be found here](https://cloud.google.com/kms/docs/reference/cng-signtool), [Amazon's lives here](https://docs.aws.amazon.com/cloudhsm/latest/userguide/signtool.html). 
 
 ## Custom signtool.exe
 
 Some providers provide drop-in replacements for `signtool.exe`. If that's the case, simply pass the path to that replacement:
 
-```
-{
+```ts
+await sign({
   // or process.env.WINDOWS_SIGNTOOL_PATH
   signToolPath: "C:\\Path\\To\\my-custom-tool.exe",
-}
+})
 ```
 
 ## Fully custom process
 
 If your HSM provider has a more complex setup, you might have to call a custom file with custom parameters. If that's the case, use a hook function or hook module, which allows you to completely customize what to do with each file that `@electron/windows-sign` wants to sign. More documentation about this option can be found in the ["Signing with a custom hook function" section above](#with-a-custom-hook-function).
+
 # License
 BSD 2-Clause "Simplified". Please see LICENSE for details.
 
