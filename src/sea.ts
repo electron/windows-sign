@@ -8,19 +8,43 @@ import { spawnPromise } from './spawn';
 import { log } from './utils/log';
 import { SignToolOptions } from './types';
 
-interface SeaOptions {
-  // Full path to the sea. Needs to end with .exe
-  path: string
-  // Optional: A binary to use. Will use the current executable
-  // (process.execPath) by default.
+/**
+ * Options for signing with a Node.js single executable application.
+ *
+ * @category Single executable applications
+ */
+export interface SeaOptions {
+  /**
+   * Full path to the Node.js single executable application. Needs to end with `.exe`.
+   */
+  path: string;
+  /**
+   * A binary to use. Will use the current executable (process.execPath) by default.
+   *
+   * @defaultValue The Node.js {@link https://nodejs.org/api/process.html#processexecpath | `process.execPath`}
+   */
   bin?: string;
-  // Sign options
-  windowsSign: SignToolOptions
+  /**
+   * Options to pass to SignTool.
+   */
+  windowsSign: SignToolOptions;
 }
 
-interface InternalSeaOptions extends Required<SeaOptions> {
-  dir: string
-  filename: string
+/**
+ * This interface represents {@link SeaOptions} with all optional properties
+ * inferred by `@electron/windows-sign` if not passed in by the user.
+ *
+ * @category Single executable applications
+ */
+export interface InternalSeaOptions extends Required<SeaOptions> {
+  /**
+   * Directory of the Node.js single executable application.
+   */
+  dir: string;
+  /**
+   * File name of the Node.js single executable application.
+   */
+  filename: string;
 }
 
 /**
@@ -104,6 +128,8 @@ sign({ ...options, files })
  * This is useful with other tooling that _always_ calls
  * a signtool.exe to sign. Some of those tools cannot be
  * easily configured, but we _can_ override their signtool.exe.
+ *
+ * @category Single executable applications
  */
 export async function createSeaSignTool(options: Partial<SeaOptions> = {}): Promise<InternalSeaOptions> {
   checkCompatibility();
