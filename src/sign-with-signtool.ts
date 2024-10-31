@@ -109,6 +109,7 @@ export async function signWithSignTool(options: InternalSignOptions) {
   }
 
   const internalOptions = {
+    appendSignature: false,
     ...options,
     certificateFile,
     certificatePassword,
@@ -126,8 +127,10 @@ export async function signWithSignTool(options: InternalSignOptions) {
 
   if (hashes.includes(HASHES.sha1)) {
     await execute({ ...internalOptions, hash: HASHES.sha1 });
+    // If we signed with SHA1, we need to append the SHA256 signature:
+    internalOptions.appendSignature = true
   }
   if (hashes.includes(HASHES.sha256)) {
-    await execute({ ...internalOptions, hash: HASHES.sha256, appendSignature: true });
+    await execute({ ...internalOptions, hash: HASHES.sha256 });
   }
 }
