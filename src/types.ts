@@ -113,6 +113,10 @@ export interface OptionalSignToolOptions {
    * @defaultValue false
    */
   signJavaScript?: boolean;
+  /**
+   * Hash algorithms to use for signing.
+   */
+  hashes?: HASHES[];
 }
 
 /**
