@@ -28,6 +28,9 @@
     "url": "https://github.com/electron/windows-sign/issues"
   },
   "homepage": "https://github.com/electron/windows-sign",
+  "publishConfig": {
+    "provenance": true
+  },
   "dependencies": {
     "cross-dirname": "^0.1.0",
     "debug": "^4.3.4",

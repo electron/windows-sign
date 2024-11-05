@@ -128,7 +128,7 @@ export async function signWithSignTool(options: InternalSignOptions) {
   if (hashes.includes(HASHES.sha1)) {
     await execute({ ...internalOptions, hash: HASHES.sha1 });
     // If we signed with SHA1, we need to append the SHA256 signature:
-    internalOptions.appendSignature = true
+    internalOptions.appendSignature = true;
   }
   if (hashes.includes(HASHES.sha256)) {
     await execute({ ...internalOptions, hash: HASHES.sha256 });
