@@ -90,8 +90,7 @@ function main() {
       throw new Error(stderr);
     }
   } catch (error) {
-    process.exitCode = 1;
-    throw new Error(error);
+    process.exit(1);
   }
 }
 
