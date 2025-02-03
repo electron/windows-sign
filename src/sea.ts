@@ -90,8 +90,9 @@ function main() {
       throw new Error(stderr);
     }
   } catch (error) {
-    process.exitCode = 1;
-    throw new Error(error);
+    // Do not rethrow the error or write it to stdout/stderr. Then the process won't terminate.
+    // See: https://github.com/electron/windows-sign/pull/48
+    process.exit(1);
   }
 }
 
