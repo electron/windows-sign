@@ -84,11 +84,9 @@ function main() {
       { stdio: ['inherit', 'inherit', 'pipe'] }
     );
 
-    const stderr = spawn.stderr.toString().trim();
-
-    if (stderr) {
-      throw new Error(stderr);
-    }
+    if (spawn.status !== 0) {
+      throw new Error(\`Spawn failed with code: \${spawn.status}. Stderr: \${spawn.stderr}\`);
+    } 
   } catch (error) {
     // Do not rethrow the error or write it to stdout/stderr. Then the process won't terminate.
     // See: https://github.com/electron/windows-sign/pull/48
@@ -109,16 +107,21 @@ const options = JSON.parse(process.argv[2]);
 const signArgv = JSON.parse(process.argv[3]);
 const files = signArgv.slice(-1);
 
-fs.appendFileSync(logPath, \`\\n\${files}\`);
-sign({ ...options, files })
+try {
+  fs.appendFileSync(logPath, \`\\nCalled with: \${JSON.stringify(process.argv, null, 2)}\`);
+
+  sign({ ...options, files })
   .then((result) => {
-    fs.appendFileSync(logPath, \`\\n\${result}\`);
-    console.log(\`Successfully signed \${files}\`, result);
+    fs.appendFileSync(logPath, \`\\nSuccessfully signed with result: \${result}\`);
   })
   .catch((error) => {
-    fs.appendFileSync(logPath, \`\\n\${error}\`);
+    fs.appendFileSync(logPath, \`\\nError from sign: \${error}\`);
     throw new Error(error);
   });
+} catch (error) {
+  fs.appendFileSync(logPath, \`\\Error invoking sign: \${error}\`);
+  throw new Error(error);
+}
 `;
 
 /**
