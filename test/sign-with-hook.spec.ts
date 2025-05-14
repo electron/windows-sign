@@ -13,7 +13,6 @@ describe('sign with hook', async () => {
     };
 
     await signWithHook({
-      appDirectory: '',
       files: ['my/fake/file'],
       hookFunction,
     });
@@ -36,7 +35,6 @@ describe('sign with hook', async () => {
     };
 
     await signWithHook({
-      appDirectory: '',
       files: ['my/fake/file'],
       hookFunction,
     });
@@ -47,7 +45,6 @@ describe('sign with hook', async () => {
   it('should call a hook module', async () => {
     const fakeFile = `my/fake/file/${Date.now()}`;
     await signWithHook({
-      appDirectory: '',
       files: [fakeFile],
       hookModulePath: './test/fixtures/hook-module.js',
     });
