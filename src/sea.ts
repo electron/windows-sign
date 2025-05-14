@@ -1,12 +1,11 @@
-import { getDirname } from 'cross-dirname';
-import path from 'path';
-import os from 'os';
+import path from 'node:path';
+import os from 'node:os';
 import fs from 'fs-extra';
 import postject from 'postject';
 
-import { spawnPromise } from './spawn';
-import { log } from './utils/log';
-import { SignToolOptions } from './types';
+import { spawnPromise } from './spawn.js';
+import { log } from './utils/log.js';
+import { SignToolOptions } from './types.js';
 
 /**
  * Options for signing with a Node.js single executable application.
@@ -47,18 +46,6 @@ export interface InternalSeaOptions extends Required<SeaOptions> {
   filename: string;
 }
 
-/**
- * cross-dir uses new Error() stacks
- * to figure out our directory in a way
- * that's somewhat cross-compatible.
- *
- * We can't just use __dirname because it's
- * undefined in ESM - and we can't use import.meta.url
- * because TypeScript won't allow usage unless you're
- * _only_ compiling for ESM.
- */
-export const DIRNAME = getDirname();
-
 const FILENAMES = {
   SEA_CONFIG: 'sea-config.json',
   SEA_MAIN: 'sea.js',
@@ -71,7 +58,7 @@ const bin = "%PATH_TO_BIN%";
 const script = "%PATH_TO_SCRIPT%";
 const options = %WINDOWS_SIGN_OPTIONS%
 
-const { spawnSync } = require('child_process');
+import { spawnSync } from 'node:child_process';
 
 function main() {
   console.log("@electron/windows-sign sea");
@@ -100,7 +87,7 @@ main();
 const SEA_RECEIVER_SCRIPT = `
 import { sign } from '@electron/windows-sign';
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 const logPath = path.join('electron-windows-sign.log');
 const options = JSON.parse(process.argv[2]);
@@ -135,7 +122,9 @@ try {
  *
  * @category Single executable applications
  */
-export async function createSeaSignTool(options: Partial<SeaOptions> = {}): Promise<InternalSeaOptions> {
+export async function createSeaSignTool(
+  options: Partial<SeaOptions> = {}
+): Promise<InternalSeaOptions> {
   checkCompatibility();
 
   const requiredOptions = await getOptions(options);
@@ -160,18 +149,21 @@ async function createFiles(options: InternalSeaOptions) {
   const receiverPath = path.join(options.dir, FILENAMES.SEA_RECEIVER);
 
   // sea-config.json
-  await fs.outputJSON(path.join(dir, FILENAMES.SEA_CONFIG), {
-    main: FILENAMES.SEA_MAIN,
-    output: FILENAMES.SEA_BLOB,
-    disableExperimentalSEAWarning: true
-  }, {
-    spaces: 2
-  });
+  await fs.outputJSON(
+    path.join(dir, FILENAMES.SEA_CONFIG),
+    {
+      main: FILENAMES.SEA_MAIN,
+      output: FILENAMES.SEA_BLOB,
+      disableExperimentalSEAWarning: true
+    },
+    {
+      spaces: 2
+    }
+  );
 
   // signtool.js
   const binPath = bin || process.execPath;
-  const script = SEA_MAIN_SCRIPT
-    .replace('%PATH_TO_BIN%', escapeMaybe(binPath))
+  const script = SEA_MAIN_SCRIPT.replace('%PATH_TO_BIN%', escapeMaybe(binPath))
     .replace('%PATH_TO_SCRIPT%', escapeMaybe(receiverPath))
     .replace('%WINDOWS_SIGN_OPTIONS%', JSON.stringify(options.windowsSign));
 
@@ -203,12 +195,8 @@ async function createBinary(options: InternalSeaOptions) {
   await fs.copyFile(process.execPath, seaPath);
 
   // Remove the Node signature
-  const signtool = path.join(DIRNAME, '../../vendor/signtool.exe');
-  await spawnPromise(signtool, [
-    'remove',
-    '/s',
-    seaPath
-  ]);
+  const signtool = path.join(import.meta.dirname, '../../vendor/signtool.exe');
+  await spawnPromise(signtool, ['remove', '/s', seaPath]);
 
   // Inject the blob
   const blob = await fs.readFile(path.join(dir, FILENAMES.SEA_BLOB));
@@ -219,11 +207,7 @@ async function createBinary(options: InternalSeaOptions) {
 
 async function cleanup(options: InternalSeaOptions) {
   const { dir } = options;
-  const toRemove = [
-    FILENAMES.SEA_BLOB,
-    FILENAMES.SEA_MAIN,
-    FILENAMES.SEA_CONFIG
-  ];
+  const toRemove = [FILENAMES.SEA_BLOB, FILENAMES.SEA_MAIN, FILENAMES.SEA_CONFIG];
 
   for (const file of toRemove) {
     try {
@@ -271,7 +255,9 @@ function checkCompatibility() {
     return true;
   }
 
-  throw new Error(`Your Node.js version (${process.version}) does not support Single Executable Applications. Please upgrade your version of Node.js.`);
+  throw new Error(
+    `Your Node.js version (${process.version}) does not support Single Executable Applications. Please upgrade your version of Node.js.`
+  );
 }
 
 /** Make sure that the input string has escaped backwards slashes
@@ -281,7 +267,9 @@ function escapeMaybe(input: string): string {
   const result = input.split(path.sep).join('\\\\');
 
   if (result.includes('\\\\\\\\')) {
-    throw new Error(`Your passed input ${input} contains escaped slashes. Please do not escape them`);
+    throw new Error(
+      `Your passed input ${input} contains escaped slashes. Please do not escape them`
+    );
   }
 
   return result;

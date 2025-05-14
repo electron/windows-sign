@@ -1,10 +1,7 @@
-import path from 'path';
-import { log } from './utils/log';
-import { spawnPromise } from './spawn';
-import { HASHES, InternalSignOptions, InternalSignToolOptions } from './types';
-import { getDirname } from 'cross-dirname';
-
-const DIRNAME = getDirname();
+import path from 'node:path';
+import { log } from './utils/log.js';
+import { spawnPromise } from './spawn.js';
+import { HASHES, InternalSignOptions, InternalSignToolOptions } from './types.js';
 
 function getSigntoolArgs(options: InternalSignToolOptions) {
   // See the following url for docs
@@ -65,7 +62,7 @@ function getSigntoolArgs(options: InternalSignToolOptions) {
       extraArgs.push(...options.signWithParams);
     } else {
       // Split up at spaces and doublequotes
-      extraArgs.push(...options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>);
+      extraArgs.push(...(options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>));
     }
 
     log('Parsed signWithParams as:', extraArgs);
@@ -92,11 +89,18 @@ async function execute(options: InternalSignToolOptions) {
 }
 
 export async function signWithSignTool(options: InternalSignOptions) {
-  const certificatePassword = options.certificatePassword || process.env.WINDOWS_CERTIFICATE_PASSWORD;
+  const certificatePassword =
+    options.certificatePassword || process.env.WINDOWS_CERTIFICATE_PASSWORD;
   const certificateFile = options.certificateFile || process.env.WINDOWS_CERTIFICATE_FILE;
   const signWithParams = options.signWithParams || process.env.WINDOWS_SIGN_WITH_PARAMS;
-  const timestampServer = options.timestampServer || process.env.WINDOWS_TIMESTAMP_SERVER || 'http://timestamp.digicert.com';
-  const signToolPath = options.signToolPath || process.env.WINDOWS_SIGNTOOL_PATH || path.join(DIRNAME, '../../vendor/signtool.exe');
+  const timestampServer =
+    options.timestampServer ||
+    process.env.WINDOWS_TIMESTAMP_SERVER ||
+    'http://timestamp.digicert.com';
+  const signToolPath =
+    options.signToolPath ||
+    process.env.WINDOWS_SIGNTOOL_PATH ||
+    path.join(import.meta.dirname, '../../vendor/signtool.exe');
   const description = options.description || process.env.WINDOWS_SIGN_DESCRIPTION;
   const website = options.website || process.env.WINDOWS_SIGN_WEBSITE;
 

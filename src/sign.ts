@@ -1,9 +1,9 @@
-import { getFilesToSign } from './files';
-import { signWithHook } from './sign-with-hook';
-import { signWithSignTool } from './sign-with-signtool';
-import { InternalSignOptions, SignOptions } from './types';
-import { enableDebugging, log } from './utils/log';
-import { booleanFromEnv } from './utils/parse-env';
+import { getFilesToSign } from './files.js';
+import { signWithHook } from './sign-with-hook.js';
+import { signWithSignTool } from './sign-with-signtool.js';
+import { InternalSignOptions, SignOptions } from './types.js';
+import { enableDebugging, log } from './utils/log.js';
+import { booleanFromEnv } from './utils/parse-env.js';
 
 /**
  * This is the main function exported from this module. It'll
