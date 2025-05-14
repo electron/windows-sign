@@ -1,1 +1,1 @@
-declare module 'postject'
+declare module 'postject';

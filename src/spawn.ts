@@ -1,5 +1,5 @@
-import { SpawnOptions } from 'child_process';
-import { log } from './utils/log';
+import { SpawnOptions } from 'node:child_process';
+import { log } from './utils/log.js';
 
 export interface SpawnPromiseResult {
   stdout: string;
@@ -15,24 +15,26 @@ export interface SpawnPromiseResult {
  * @param {SpawnOptions} [options]
  * @returns {Promise<SpawnPromiseResult>}
  */
-export function spawnPromise(name: string,
+export async function spawnPromise(
+  name: string,
   args: Array<string>,
-  options?: SpawnOptions): Promise<SpawnPromiseResult> {
+  options: SpawnOptions = {}
+): Promise<SpawnPromiseResult> {
+  const { spawn } = await import('node:child_process');
+  const fork = spawn(name, args, options);
+
+  log(`Spawning ${name} with ${args}`);
+
+  let stdout = '';
+  let stderr = '';
+
   return new Promise((resolve) => {
-    const { spawn } = require('child_process');
-    const fork = spawn(name, args, options);
-
-    log(`Spawning ${name} with ${args}`);
-
-    let stdout = '';
-    let stderr = '';
-
-    fork.stdout.on('data', (data: any) => {
+    fork.stdout?.on('data', (data: any) => {
       log(`Spawn ${name} stdout: ${data}`);
       stdout += data;
     });
 
-    fork.stderr.on('data', (data: any) => {
+    fork.stderr?.on('data', (data: any) => {
       log(`Spawn ${name} stderr: ${data}`);
       stderr += data;
     });
