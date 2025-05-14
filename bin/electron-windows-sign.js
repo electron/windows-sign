@@ -15,7 +15,7 @@ const { values: args, positionals } = parseArgs({
     'sign-with-params': { type: 'string' },
     help: { type: 'boolean', short: 'h' },
     debug: { type: 'boolean' },
-    'automatically-select-certificate': { type: 'boolean', default: true },
+    'automatically-select-certificate': { type: 'boolean', default: true }
   },
   allowPositionals: true
 });
