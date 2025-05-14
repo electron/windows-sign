@@ -2,12 +2,13 @@ NAME
   electron-windows-sign -- code signing for Electron apps on Windows.
 
 SYNOPSIS
-  electron-windows-sign app [options ...]
+  electron-windows-sign <app> [options ...]
 
 DESCRIPTION
   app
     Path to the application to sign.  It must be a directory.
 
+OPTIONS
   certificate-file
     Path to the certificate file (.pfx) to use for signing.
 

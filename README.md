@@ -20,11 +20,10 @@ you, you can skip ahead to your use case:
 
 ## Direct Usage
 
-`@electron/windows-codesign` is built to both esm and cjs and can be used both as a module as well as directly from the command line.
+`@electron/windows-codesign` is distributed as an ESM package and can be used both as a module as well as directly from the command line.
 
 ```ts
 import { sign } from "@electron/windows-sign"
-// or const { sign } = require("@electron/windows-sign")
 
 await sign(signOptions)
 ```
