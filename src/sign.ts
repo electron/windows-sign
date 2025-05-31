@@ -31,7 +31,7 @@ export async function sign(options: SignOptions) {
     ...options,
     signJavaScript,
     hookModulePath,
-    files
+    files,
   };
 
   // If a hook is provides, sign with the hook

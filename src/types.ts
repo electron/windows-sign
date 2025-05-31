@@ -45,6 +45,7 @@ export interface SignOptionsForFiles extends SignToolOptions {
  */
 export interface SignToolOptions extends OptionalSignToolOptions, OptionalHookOptions {}
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface InternalSignOptions extends SignOptionsForFiles {}
 
 export interface InternalSignToolOptions extends OptionalSignToolOptions, OptionalHookOptions {

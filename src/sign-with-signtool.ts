@@ -65,7 +65,7 @@ function getSigntoolArgs(options: InternalSignToolOptions) {
       extraArgs.push(...options.signWithParams);
     } else {
       // Split up at spaces and doublequotes
-      extraArgs.push(...options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>);
+      extraArgs.push(...(options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>));
     }
 
     log('Parsed signWithParams as:', extraArgs);
@@ -83,7 +83,7 @@ async function execute(options: InternalSignToolOptions) {
   log('Executing signtool with args', { args, files });
   const { code, stderr, stdout } = await spawnPromise(signToolPath, [...args, ...files], {
     env: process.env,
-    cwd: process.cwd()
+    cwd: process.cwd(),
   });
 
   if (code !== 0) {
@@ -92,11 +92,18 @@ async function execute(options: InternalSignToolOptions) {
 }
 
 export async function signWithSignTool(options: InternalSignOptions) {
-  const certificatePassword = options.certificatePassword || process.env.WINDOWS_CERTIFICATE_PASSWORD;
+  const certificatePassword =
+    options.certificatePassword || process.env.WINDOWS_CERTIFICATE_PASSWORD;
   const certificateFile = options.certificateFile || process.env.WINDOWS_CERTIFICATE_FILE;
   const signWithParams = options.signWithParams || process.env.WINDOWS_SIGN_WITH_PARAMS;
-  const timestampServer = options.timestampServer || process.env.WINDOWS_TIMESTAMP_SERVER || 'http://timestamp.digicert.com';
-  const signToolPath = options.signToolPath || process.env.WINDOWS_SIGNTOOL_PATH || path.join(DIRNAME, '../../vendor/signtool.exe');
+  const timestampServer =
+    options.timestampServer ||
+    process.env.WINDOWS_TIMESTAMP_SERVER ||
+    'http://timestamp.digicert.com';
+  const signToolPath =
+    options.signToolPath ||
+    process.env.WINDOWS_SIGNTOOL_PATH ||
+    path.join(DIRNAME, '../../vendor/signtool.exe');
   const description = options.description || process.env.WINDOWS_SIGN_DESCRIPTION;
   const website = options.website || process.env.WINDOWS_SIGN_WEBSITE;
 
@@ -117,7 +124,7 @@ export async function signWithSignTool(options: InternalSignOptions) {
     signToolPath,
     description,
     timestampServer,
-    website
+    website,
   };
 
   const hashes =

@@ -63,7 +63,7 @@ const FILENAMES = {
   SEA_CONFIG: 'sea-config.json',
   SEA_MAIN: 'sea.js',
   SEA_BLOB: 'sea.blob',
-  SEA_RECEIVER: 'receiver.mjs'
+  SEA_RECEIVER: 'receiver.mjs',
 };
 
 const SEA_MAIN_SCRIPT = `
@@ -135,7 +135,9 @@ try {
  *
  * @category Single executable applications
  */
-export async function createSeaSignTool(options: Partial<SeaOptions> = {}): Promise<InternalSeaOptions> {
+export async function createSeaSignTool(
+  options: Partial<SeaOptions> = {},
+): Promise<InternalSeaOptions> {
   checkCompatibility();
 
   const requiredOptions = await getOptions(options);
@@ -160,18 +162,21 @@ async function createFiles(options: InternalSeaOptions) {
   const receiverPath = path.join(options.dir, FILENAMES.SEA_RECEIVER);
 
   // sea-config.json
-  await fs.outputJSON(path.join(dir, FILENAMES.SEA_CONFIG), {
-    main: FILENAMES.SEA_MAIN,
-    output: FILENAMES.SEA_BLOB,
-    disableExperimentalSEAWarning: true
-  }, {
-    spaces: 2
-  });
+  await fs.outputJSON(
+    path.join(dir, FILENAMES.SEA_CONFIG),
+    {
+      main: FILENAMES.SEA_MAIN,
+      output: FILENAMES.SEA_BLOB,
+      disableExperimentalSEAWarning: true,
+    },
+    {
+      spaces: 2,
+    },
+  );
 
   // signtool.js
   const binPath = bin || process.execPath;
-  const script = SEA_MAIN_SCRIPT
-    .replace('%PATH_TO_BIN%', escapeMaybe(binPath))
+  const script = SEA_MAIN_SCRIPT.replace('%PATH_TO_BIN%', escapeMaybe(binPath))
     .replace('%PATH_TO_SCRIPT%', escapeMaybe(receiverPath))
     .replace('%WINDOWS_SIGN_OPTIONS%', JSON.stringify(options.windowsSign));
 
@@ -186,7 +191,7 @@ async function createBlob(options: InternalSeaOptions) {
   log(`Calling ${bin} with options:`, args);
 
   const { stderr, stdout } = await spawnPromise(bin, args, {
-    cwd
+    cwd,
   });
 
   log('stdout:', stdout);
@@ -204,26 +209,18 @@ async function createBinary(options: InternalSeaOptions) {
 
   // Remove the Node signature
   const signtool = path.join(DIRNAME, '../../vendor/signtool.exe');
-  await spawnPromise(signtool, [
-    'remove',
-    '/s',
-    seaPath
-  ]);
+  await spawnPromise(signtool, ['remove', '/s', seaPath]);
 
   // Inject the blob
   const blob = await fs.readFile(path.join(dir, FILENAMES.SEA_BLOB));
   await postject.inject(seaPath, 'NODE_SEA_BLOB', blob, {
-    sentinelFuse: 'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2'
+    sentinelFuse: 'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2',
   });
 }
 
 async function cleanup(options: InternalSeaOptions) {
   const { dir } = options;
-  const toRemove = [
-    FILENAMES.SEA_BLOB,
-    FILENAMES.SEA_MAIN,
-    FILENAMES.SEA_CONFIG
-  ];
+  const toRemove = [FILENAMES.SEA_BLOB, FILENAMES.SEA_MAIN, FILENAMES.SEA_CONFIG];
 
   for (const file of toRemove) {
     try {
@@ -255,7 +252,7 @@ async function getOptions(options: Partial<SeaOptions>): Promise<InternalSeaOpti
     dir: path.dirname(cloned.path),
     filename: path.basename(cloned.path),
     bin: cloned.bin,
-    windowsSign: cloned.windowsSign
+    windowsSign: cloned.windowsSign,
   };
 }
 
@@ -271,7 +268,9 @@ function checkCompatibility() {
     return true;
   }
 
-  throw new Error(`Your Node.js version (${process.version}) does not support Single Executable Applications. Please upgrade your version of Node.js.`);
+  throw new Error(
+    `Your Node.js version (${process.version}) does not support Single Executable Applications. Please upgrade your version of Node.js.`,
+  );
 }
 
 /** Make sure that the input string has escaped backwards slashes
@@ -281,7 +280,9 @@ function escapeMaybe(input: string): string {
   const result = input.split(path.sep).join('\\\\');
 
   if (result.includes('\\\\\\\\')) {
-    throw new Error(`Your passed input ${input} contains escaped slashes. Please do not escape them`);
+    throw new Error(
+      `Your passed input ${input} contains escaped slashes. Please do not escape them`,
+    );
   }
 
   return result;

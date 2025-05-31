@@ -15,7 +15,7 @@ describe('sign with hook', async () => {
     await signWithHook({
       appDirectory: '',
       files: ['my/fake/file'],
-      hookFunction
+      hookFunction,
     });
 
     assert.strictEqual(hookCalled, true);
@@ -38,7 +38,7 @@ describe('sign with hook', async () => {
     await signWithHook({
       appDirectory: '',
       files: ['my/fake/file'],
-      hookFunction
+      hookFunction,
     });
 
     assert.strictEqual(hookCalled, true);
@@ -49,7 +49,7 @@ describe('sign with hook', async () => {
     await signWithHook({
       appDirectory: '',
       files: [fakeFile],
-      hookModulePath: './test/fixtures/hook-module.js'
+      hookModulePath: './test/fixtures/hook-module.js',
     });
 
     assert.strictEqual(process.env.HOOK_MODULE_CALLED_WITH_FILE, fakeFile);
