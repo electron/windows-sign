@@ -51,7 +51,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
     "globstar": "^1.0.0",
-    "husky": "^9.1.7",
+    "husky": "^8.0.3",
     "lint-staged": "^16.1.0",
     "prettier": "^3.5.3",
     "tsx": "^3.14.0",
@@ -65,7 +65,7 @@
     "test:loader": "globstar -- node --loader tsx --test \"test/**/*.spec.ts\"",
     "test": "globstar -- node --import tsx --test \"test/**/*.spec.ts\"",
     "prepublishOnly": "yarn build",
-    "prepare": "husky"
+    "prepare": "husky install"
   },
   "engines": {
     "node": ">=14.14"
