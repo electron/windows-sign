@@ -52,7 +52,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "globstar": "^1.0.0",
     "husky": "^8.0.3",
-    "lint-staged": "^16.1.0",
+    "lint-staged": "^14.0.1",
     "prettier": "^3.5.3",
     "tsx": "^3.14.0",
     "typedoc": "~0.25.13",
