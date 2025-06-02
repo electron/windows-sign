@@ -15,9 +15,11 @@ export interface SpawnPromiseResult {
  * @param {SpawnOptions} [options]
  * @returns {Promise<SpawnPromiseResult>}
  */
-export function spawnPromise(name: string,
+export function spawnPromise(
+  name: string,
   args: Array<string>,
-  options?: SpawnOptions): Promise<SpawnPromiseResult> {
+  options?: SpawnOptions,
+): Promise<SpawnPromiseResult> {
   return new Promise((resolve) => {
     const { spawn } = require('child_process');
     const fork = spawn(name, args, options);
@@ -27,11 +29,13 @@ export function spawnPromise(name: string,
     let stdout = '';
     let stderr = '';
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fork.stdout.on('data', (data: any) => {
       log(`Spawn ${name} stdout: ${data}`);
       stdout += data;
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fork.stderr.on('data', (data: any) => {
       log(`Spawn ${name} stderr: ${data}`);
       stderr += data;

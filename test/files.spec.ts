@@ -7,16 +7,12 @@ import { getFilesToSign } from '../src/files';
 describe('files', async () => {
   it('gets files to sign', () => {
     const files = getFilesToSign({
-      appDirectory: path.resolve(__dirname, 'fixtures', 'app')
+      appDirectory: path.resolve(__dirname, 'fixtures', 'app'),
     });
 
-    const expectedFiles = [
-      'fake.cab',
-      'fake.dll',
-      'fake.exe',
-      'fake.msix',
-      'fake.node'
-    ].map((f) => path.join(__dirname, 'fixtures', 'app', f));
+    const expectedFiles = ['fake.cab', 'fake.dll', 'fake.exe', 'fake.msix', 'fake.node'].map((f) =>
+      path.join(__dirname, 'fixtures', 'app', f),
+    );
 
     assert.deepEqual(files, expectedFiles);
   });
@@ -24,7 +20,7 @@ describe('files', async () => {
   it('gets files to sign (with JS files)', () => {
     const files = getFilesToSign({
       appDirectory: path.resolve(__dirname, 'fixtures', 'app'),
-      signJavaScript: true
+      signJavaScript: true,
     });
 
     const expectedFiles = [
@@ -33,7 +29,7 @@ describe('files', async () => {
       'fake.exe',
       'fake.js',
       'fake.msix',
-      'fake.node'
+      'fake.node',
     ].map((f) => path.join(__dirname, 'fixtures', 'app', f));
 
     assert.deepEqual(files, expectedFiles);

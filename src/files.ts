@@ -44,7 +44,7 @@ export function getFilesToSign(options: SignOptions, dir?: string): Array<string
     IS_PACKAGE_REGEX,
     IS_CATCAB_REGEX,
     IS_SILVERLIGHT_REGEX,
-    IS_SCRIPT_REGEX
+    IS_SCRIPT_REGEX,
   ];
 
   if (options.signJavaScript) {

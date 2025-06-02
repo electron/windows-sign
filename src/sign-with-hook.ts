@@ -22,7 +22,9 @@ function getHookFunction(options: InternalHookOptions): HookFunction {
   }
 
   if (!hookFunction) {
-    throw new Error('No hook function found. Signing will not be possible. Please see the documentation for how to pass a hook function to @electron/windows-sign');
+    throw new Error(
+      'No hook function found. Signing will not be possible. Please see the documentation for how to pass a hook function to @electron/windows-sign',
+    );
   }
 
   return hookFunction;

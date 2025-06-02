@@ -7,7 +7,7 @@ import {
   SignOptions,
   SignToolOptions,
   SignOptionsForDirectory,
-  SignOptionsForFiles
+  SignOptionsForFiles,
 } from './types';
 
 export {
@@ -21,5 +21,5 @@ export {
   SeaOptions,
   InternalSeaOptions,
   SignOptionsForDirectory,
-  SignOptionsForFiles
+  SignOptionsForFiles,
 };
