@@ -29,11 +29,13 @@ export async function spawnPromise(
   let stderr = '';
 
   return new Promise((resolve) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fork.stdout?.on('data', (data: any) => {
       log(`Spawn ${name} stdout: ${data}`);
       stdout += data;
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fork.stderr?.on('data', (data: any) => {
       log(`Spawn ${name} stderr: ${data}`);
       stderr += data;
