@@ -7,7 +7,7 @@ import {
   SignOptions,
   SignToolOptions,
   SignOptionsForDirectory,
-  SignOptionsForFiles
+  SignOptionsForFiles,
 } from './types.js';
 
 export {

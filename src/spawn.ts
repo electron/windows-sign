@@ -18,7 +18,7 @@ export interface SpawnPromiseResult {
 export async function spawnPromise(
   name: string,
   args: Array<string>,
-  options: SpawnOptions = {}
+  options: SpawnOptions = {},
 ): Promise<SpawnPromiseResult> {
   const { spawn } = await import('node:child_process');
   const fork = spawn(name, args, options);
