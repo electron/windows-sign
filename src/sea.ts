@@ -1,12 +1,11 @@
-import { getDirname } from 'cross-dirname';
-import path from 'path';
-import os from 'os';
+import path from 'node:path';
+import os from 'node:os';
 import fs from 'fs-extra';
 import postject from 'postject';
 
-import { spawnPromise } from './spawn';
-import { log } from './utils/log';
-import { SignToolOptions } from './types';
+import { spawnPromise } from './spawn.js';
+import { log } from './utils/log.js';
+import { SignToolOptions } from './types.js';
 
 /**
  * Options for signing with a Node.js single executable application.
@@ -47,18 +46,6 @@ export interface InternalSeaOptions extends Required<SeaOptions> {
   filename: string;
 }
 
-/**
- * cross-dir uses new Error() stacks
- * to figure out our directory in a way
- * that's somewhat cross-compatible.
- *
- * We can't just use __dirname because it's
- * undefined in ESM - and we can't use import.meta.url
- * because TypeScript won't allow usage unless you're
- * _only_ compiling for ESM.
- */
-export const DIRNAME = getDirname();
-
 const FILENAMES = {
   SEA_CONFIG: 'sea-config.json',
   SEA_MAIN: 'sea.js',
@@ -71,7 +58,7 @@ const bin = "%PATH_TO_BIN%";
 const script = "%PATH_TO_SCRIPT%";
 const options = %WINDOWS_SIGN_OPTIONS%
 
-const { spawnSync } = require('child_process');
+import { spawnSync } from 'node:child_process';
 
 function main() {
   console.log("@electron/windows-sign sea");
@@ -100,7 +87,7 @@ main();
 const SEA_RECEIVER_SCRIPT = `
 import { sign } from '@electron/windows-sign';
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 const logPath = path.join('electron-windows-sign.log');
 const options = JSON.parse(process.argv[2]);
@@ -208,7 +195,7 @@ async function createBinary(options: InternalSeaOptions) {
   await fs.copyFile(process.execPath, seaPath);
 
   // Remove the Node signature
-  const signtool = path.join(DIRNAME, '../../vendor/signtool.exe');
+  const signtool = path.join(import.meta.dirname, '../../vendor/signtool.exe');
   await spawnPromise(signtool, ['remove', '/s', seaPath]);
 
   // Inject the blob

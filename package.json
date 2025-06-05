@@ -2,8 +2,7 @@
   "name": "@electron/windows-sign",
   "version": "0.0.0-development",
   "description": "Codesign Electron Windows apps",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "type": "module",
   "files": [
     "dist",
     "entitlements",
@@ -13,7 +12,7 @@
     "vendor"
   ],
   "bin": {
-    "electron-windows-sign": "bin/electron-windows-sign.js"
+    "electron-windows-sign": "bin/electron-windows-sign.mjs"
   },
   "repository": {
     "type": "git",
@@ -32,16 +31,15 @@
     "provenance": true
   },
   "dependencies": {
-    "cross-dirname": "^0.1.0",
     "debug": "^4.3.4",
     "fs-extra": "^11.1.1",
-    "minimist": "^1.2.8",
     "postject": "^1.0.0-alpha.6"
   },
   "devDependencies": {
+    "@tsconfig/node22": "^22.0.1",
     "@types/debug": "^4.1.10",
     "@types/fs-extra": "^11.0.3",
-    "@types/node": "^18.18.7",
+    "@types/node": "~22.10.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.56.0",
@@ -59,7 +57,7 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "build": "tsc && tsc -p tsconfig.esm.json",
+    "build": "tsc",
     "docs": "npx typedoc",
     "lint": "prettier --check src test && eslint --ext .ts,.js src bin test",
     "test:loader": "globstar -- node --loader tsx --test \"test/**/*.spec.ts\"",
@@ -68,7 +66,7 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": ">=14.14"
+    "node": ">=22.12.0"
   },
   "lint-staged": {
     "*.{js,ts}": [
