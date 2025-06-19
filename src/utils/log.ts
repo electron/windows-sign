@@ -1,7 +1,7 @@
-import { debug as debugModule } from 'debug';
+import debug from 'debug';
 
 export function enableDebugging() {
-  debugModule.enable('electron-windows-sign');
+  debug.enable('electron-windows-sign');
 }
 
-export const log = debugModule('electron-windows-sign');
+export const log = debug('electron-windows-sign');

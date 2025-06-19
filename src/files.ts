@@ -1,7 +1,7 @@
-import path from 'path';
-import fs from 'fs-extra';
+import path from 'node:path';
+import fs from 'graceful-fs';
 
-import { SignOptions, SignOptionsForFiles } from './types';
+import { SignOptions, SignOptionsForFiles } from './types.js';
 
 const IS_PE_REGEX = /\.(exe|dll|sys|efi|scr|node)$/i;
 const IS_MSI_REGEX = /\.msi$/i;
