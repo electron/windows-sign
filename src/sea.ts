@@ -1,6 +1,8 @@
 import path from 'node:path';
 import os from 'node:os';
-import fs from 'fs-extra';
+import util from 'node:util';
+
+import fs from 'graceful-fs';
 import postject from 'postject';
 
 import { spawnPromise } from './spawn.js';
@@ -86,7 +88,7 @@ main();
 
 const SEA_RECEIVER_SCRIPT = `
 import { sign } from '@electron/windows-sign';
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import path from 'node:path';
 
 const logPath = path.join('electron-windows-sign.log');
@@ -140,25 +142,30 @@ export async function createSeaSignTool(
 async function createSeaReceiver(options: InternalSeaOptions) {
   const receiverPath = path.join(options.dir, FILENAMES.SEA_RECEIVER);
 
-  await fs.ensureFile(receiverPath);
-  await fs.writeFile(receiverPath, SEA_RECEIVER_SCRIPT);
+  await fs.promises.mkdir(path.dirname(receiverPath), { recursive: true });
+  await util.promisify(fs.writeFile)(receiverPath, SEA_RECEIVER_SCRIPT);
 }
 
 async function createFiles(options: InternalSeaOptions) {
   const { dir, bin } = options;
-  const receiverPath = path.join(options.dir, FILENAMES.SEA_RECEIVER);
+  const receiverPath = path.join(dir, FILENAMES.SEA_RECEIVER);
+
+  if (!fs.existsSync(dir)) {
+    await fs.promises.mkdir(dir, { recursive: true });
+  }
 
   // sea-config.json
-  await fs.outputJSON(
+  await util.promisify(fs.writeFile)(
     path.join(dir, FILENAMES.SEA_CONFIG),
-    {
-      main: FILENAMES.SEA_MAIN,
-      output: FILENAMES.SEA_BLOB,
-      disableExperimentalSEAWarning: true,
-    },
-    {
-      spaces: 2,
-    },
+    JSON.stringify(
+      {
+        main: FILENAMES.SEA_MAIN,
+        output: FILENAMES.SEA_BLOB,
+        disableExperimentalSEAWarning: true,
+      },
+      null,
+      2,
+    ),
   );
 
   // signtool.js
@@ -167,7 +174,8 @@ async function createFiles(options: InternalSeaOptions) {
     .replace('%PATH_TO_SCRIPT%', escapeMaybe(receiverPath))
     .replace('%WINDOWS_SIGN_OPTIONS%', JSON.stringify(options.windowsSign));
 
-  await fs.outputFile(path.join(dir, FILENAMES.SEA_MAIN), script);
+  await fs.promises.mkdir(dir);
+  await util.promisify(fs.writeFile)(path.join(dir, FILENAMES.SEA_MAIN), script);
 }
 
 async function createBlob(options: InternalSeaOptions) {
@@ -192,14 +200,14 @@ async function createBinary(options: InternalSeaOptions) {
 
   // Copy Node over
   const seaPath = path.join(dir, filename);
-  await fs.copyFile(process.execPath, seaPath);
+  await util.promisify(fs.copyFile)(process.execPath, seaPath);
 
   // Remove the Node signature
   const signtool = path.join(import.meta.dirname, '../../vendor/signtool.exe');
   await spawnPromise(signtool, ['remove', '/s', seaPath]);
 
   // Inject the blob
-  const blob = await fs.readFile(path.join(dir, FILENAMES.SEA_BLOB));
+  const blob = await util.promisify(fs.readFile)(path.join(dir, FILENAMES.SEA_BLOB));
   await postject.inject(seaPath, 'NODE_SEA_BLOB', blob, {
     sentinelFuse: 'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2',
   });
@@ -211,7 +219,7 @@ async function cleanup(options: InternalSeaOptions) {
 
   for (const file of toRemove) {
     try {
-      await fs.remove(path.join(dir, file));
+      await fs.promises.rm(path.join(dir, file), { force: true, recursive: true });
     } catch (error) {
       console.warn(`Tried and failed to remove ${file}. Continuing.`, error);
     }
@@ -223,7 +231,7 @@ async function getOptions(options: Partial<SeaOptions>): Promise<InternalSeaOpti
 
   if (!cloned.path) {
     cloned.path = path.join(os.homedir(), '.electron', 'windows-sign', 'sea.exe');
-    await fs.ensureFile(cloned.path);
+    await fs.promises.mkdir(path.dirname(cloned.path), { recursive: true });
   }
 
   if (!cloned.bin) {
