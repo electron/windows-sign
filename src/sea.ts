@@ -56,11 +56,11 @@ const FILENAMES = {
 };
 
 const SEA_MAIN_SCRIPT = `
+import { spawnSync } from 'node:child_process';
+
 const bin = "%PATH_TO_BIN%";
 const script = "%PATH_TO_SCRIPT%";
 const options = %WINDOWS_SIGN_OPTIONS%
-
-import { spawnSync } from 'node:child_process';
 
 function main() {
   console.log("@electron/windows-sign sea");
