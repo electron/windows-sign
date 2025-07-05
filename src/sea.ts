@@ -172,7 +172,6 @@ async function createFiles(options: InternalSeaOptions) {
     .replace('%PATH_TO_SCRIPT%', escapeMaybe(receiverPath))
     .replace('%WINDOWS_SIGN_OPTIONS%', JSON.stringify(options.windowsSign));
 
-  await fs.promises.mkdir(dir);
   await util.promisify(fs.writeFile)(path.join(dir, FILENAMES.SEA_MAIN), script);
 }
 
