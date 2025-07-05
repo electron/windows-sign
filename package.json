@@ -59,7 +59,7 @@
   "scripts": {
     "build": "tsc",
     "docs": "npx typedoc",
-    "lint": "prettier --check src test && eslint --ext .ts,.js src bin test",
+    "lint": "prettier --check src test && eslint --ext .ts,.mjs src bin test",
     "test": "globstar -- node --import tsx --test \"test/**/*.spec.ts\"",
     "prepublishOnly": "yarn build",
     "prepare": "husky install"
