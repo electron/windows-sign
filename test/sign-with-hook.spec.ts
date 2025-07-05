@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { signWithHook } from '../src/sign-with-hook';
+import { signWithHook } from '../src/sign-with-hook.js';
 
 describe('sign with hook', async () => {
   it('should call a hook function', async () => {

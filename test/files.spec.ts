@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 
-import { getFilesToSign } from '../src/files';
+import { getFilesToSign } from '../src/files.js';
 
 describe('files', async () => {
   it('gets files to sign', () => {
