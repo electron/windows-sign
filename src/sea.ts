@@ -150,9 +150,7 @@ async function createFiles(options: InternalSeaOptions) {
   const { dir, bin } = options;
   const receiverPath = path.join(dir, FILENAMES.SEA_RECEIVER);
 
-  if (!fs.existsSync(dir)) {
-    await fs.promises.mkdir(dir, { recursive: true });
-  }
+  await fs.promises.mkdir(dir, { recursive: true });
 
   // sea-config.json
   await util.promisify(fs.writeFile)(
