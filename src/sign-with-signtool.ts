@@ -11,51 +11,53 @@ function getSigntoolArgs(options: InternalSignToolOptions) {
   // https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
   const { certificateFile, certificatePassword, hash, timestampServer } = options;
   const args = ['sign'];
-
-  // Automatically select cert
-  if (options.automaticallySelectCertificate) {
-    args.push('/a');
-  }
-
-  // Dual-sign
-  if (options.appendSignature) {
-    args.push('/as');
-  }
-
-  // Timestamp
-  if (hash === HASHES.sha256) {
-    args.push('/tr', timestampServer);
-    args.push('/td', hash);
-  } else {
-    args.push('/t', timestampServer);
-  }
-
-  // Certificate file
-  if (certificateFile) {
-    args.push('/f', path.resolve(certificateFile));
-  }
-
-  // Certificate password
-  if (certificatePassword) {
-    args.push('/p', certificatePassword);
-  }
-
-  // Hash
-  args.push('/fd', hash);
-
-  // Description
-  if (options.description) {
-    args.push('/d', options.description);
-  }
-
-  // Website
-  if (options.website) {
-    args.push('/du', options.website);
-  }
-
-  // Debug
-  if (options.debug) {
-    args.push('/debug');
+  if(!options.noDefaultParams)
+  {
+    // Automatically select cert
+    if (options.automaticallySelectCertificate) {
+      args.push('/a');
+    }
+  
+    // Dual-sign
+    if (options.appendSignature) {
+      args.push('/as');
+    }
+  
+    // Timestamp
+    if (hash === HASHES.sha256) {
+      args.push('/tr', timestampServer);
+      args.push('/td', hash);
+    } else {
+      args.push('/t', timestampServer);
+    }
+  
+    // Certificate file
+    if (certificateFile) {
+      args.push('/f', path.resolve(certificateFile));
+    }
+  
+    // Certificate password
+    if (certificatePassword) {
+      args.push('/p', certificatePassword);
+    }
+  
+    // Hash
+    args.push('/fd', hash);
+  
+    // Description
+    if (options.description) {
+      args.push('/d', options.description);
+    }
+  
+    // Website
+    if (options.website) {
+      args.push('/du', options.website);
+    }
+  
+    // Debug
+    if (options.debug) {
+      args.push('/debug');
+    }
   }
 
   if (options.signWithParams) {
