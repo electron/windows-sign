@@ -200,7 +200,7 @@ async function createBinary(options: InternalSeaOptions) {
   await util.promisify(fs.copyFile)(process.execPath, seaPath);
 
   // Remove the Node signature
-  const signtool = path.join(import.meta.dirname, '../../vendor/signtool.exe');
+  const signtool = path.join(import.meta.dirname, '../vendor/signtool.exe');
   await spawnPromise(signtool, ['remove', '/s', seaPath]);
 
   // Inject the blob
