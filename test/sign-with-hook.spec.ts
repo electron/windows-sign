@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { signWithHook } from '../src/sign-with-hook';
+import { signWithHook } from '../src/sign-with-hook.js';
 
 describe('sign with hook', async () => {
   it('should call a hook function', async () => {
@@ -13,7 +13,6 @@ describe('sign with hook', async () => {
     };
 
     await signWithHook({
-      appDirectory: '',
       files: ['my/fake/file'],
       hookFunction,
     });
@@ -36,7 +35,6 @@ describe('sign with hook', async () => {
     };
 
     await signWithHook({
-      appDirectory: '',
       files: ['my/fake/file'],
       hookFunction,
     });
@@ -47,7 +45,6 @@ describe('sign with hook', async () => {
   it('should call a hook module', async () => {
     const fakeFile = `my/fake/file/${Date.now()}`;
     await signWithHook({
-      appDirectory: '',
       files: [fakeFile],
       hookModulePath: './test/fixtures/hook-module.js',
     });

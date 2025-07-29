@@ -1,5 +1,5 @@
-import { sign } from './sign';
-import { createSeaSignTool, SeaOptions, InternalSeaOptions } from './sea';
+import { sign } from './sign.js';
+import { createSeaSignTool, SeaOptions, InternalSeaOptions } from './sea.js';
 import {
   HookFunction,
   OptionalHookOptions,
@@ -8,7 +8,7 @@ import {
   SignToolOptions,
   SignOptionsForDirectory,
   SignOptionsForFiles,
-} from './types';
+} from './types.js';
 
 export {
   sign,

@@ -1,10 +1,7 @@
-import path from 'path';
-import { log } from './utils/log';
-import { spawnPromise } from './spawn';
-import { HASHES, InternalSignOptions, InternalSignToolOptions } from './types';
-import { getDirname } from 'cross-dirname';
-
-const DIRNAME = getDirname();
+import path from 'node:path';
+import { log } from './utils/log.js';
+import { spawnPromise } from './spawn.js';
+import { HASHES, InternalSignOptions, InternalSignToolOptions } from './types.js';
 
 function getSigntoolArgs(options: InternalSignToolOptions) {
   // See the following url for docs
@@ -103,7 +100,7 @@ export async function signWithSignTool(options: InternalSignOptions) {
   const signToolPath =
     options.signToolPath ||
     process.env.WINDOWS_SIGNTOOL_PATH ||
-    path.join(DIRNAME, '../../vendor/signtool.exe');
+    path.join(import.meta.dirname, '../vendor/signtool.exe');
   const description = options.description || process.env.WINDOWS_SIGN_DESCRIPTION;
   const website = options.website || process.env.WINDOWS_SIGN_WEBSITE;
 

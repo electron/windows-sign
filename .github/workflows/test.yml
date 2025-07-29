@@ -17,10 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - '22.11'
-          - '20.9'
-          - '18.17'
-          - '16.20'
+          - '22.12.x'
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -36,9 +33,5 @@ jobs:
         run: yarn build
       - name: Lint
         run: yarn lint
-      - name: Test (Node.js v20+)
-        if: ${{ matrix.node-version == '20.9' || matrix.node-version == '22.11' }}
+      - name: Test
         run: yarn test
-      - name: Test (Node.js < v20)
-        if: ${{ matrix.node-version != '20.9' && matrix.node-version != '22.11' }}
-        run: yarn test:loader

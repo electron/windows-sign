@@ -1,16 +1,17 @@
-import path from 'path';
-import { HookFunction, InternalHookOptions, InternalSignOptions } from './types';
-import { log } from './utils/log';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { HookFunction, InternalHookOptions, InternalSignOptions } from './types.js';
+import { log } from './utils/log.js';
 
 let hookFunction: HookFunction;
 
-function getHookFunction(options: InternalHookOptions): HookFunction {
+async function getHookFunction(options: InternalHookOptions): Promise<HookFunction> {
   if (options.hookFunction) {
     return options.hookFunction;
   }
 
   if (options.hookModulePath) {
-    const module = require(path.resolve(options.hookModulePath));
+    const module = await import(pathToFileURL(path.resolve(options.hookModulePath)).toString());
 
     if (module.default) {
       return module.default;
@@ -37,7 +38,7 @@ function getHookFunction(options: InternalHookOptions): HookFunction {
  * @param {InternalSignOptions} options
  */
 export async function signWithHook(options: InternalSignOptions) {
-  hookFunction = getHookFunction(options);
+  hookFunction = await getHookFunction(options);
 
   for (const file of options.files) {
     try {
