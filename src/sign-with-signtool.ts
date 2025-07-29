@@ -100,7 +100,7 @@ export async function signWithSignTool(options: InternalSignOptions) {
   const signToolPath =
     options.signToolPath ||
     process.env.WINDOWS_SIGNTOOL_PATH ||
-    path.join(import.meta.dirname, '../../vendor/signtool.exe');
+    path.join(import.meta.dirname, '../vendor/signtool.exe');
   const description = options.description || process.env.WINDOWS_SIGN_DESCRIPTION;
   const website = options.website || process.env.WINDOWS_SIGN_WEBSITE;
 
