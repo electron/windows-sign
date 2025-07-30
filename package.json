@@ -59,7 +59,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "docs": "npx typedoc",
+    "build:docs": "npx typedoc",
     "lint": "prettier --check src test && eslint --ext .ts,.mjs src bin test",
     "test": "globstar -- node --import tsx --test \"test/**/*.spec.ts\"",
     "prepublishOnly": "yarn build",
