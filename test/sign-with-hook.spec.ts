@@ -7,7 +7,7 @@ describe('sign with hook', async () => {
   it('should call a hook function', async () => {
     let hookCalled = false;
 
-    const hookFunction = (filePath: string) => {
+    const hookFunction = (filePath) => {
       assert.equal(filePath, 'my/fake/file');
       hookCalled = true;
     };
@@ -23,7 +23,7 @@ describe('sign with hook', async () => {
   it('should call a async hook function', async () => {
     let hookCalled = false;
 
-    const hookFunction = async (filePath: string) => {
+    const hookFunction = async (filePath) => {
       assert.equal(filePath, 'my/fake/file');
 
       return new Promise<void>((resolve) => {
@@ -50,5 +50,21 @@ describe('sign with hook', async () => {
     });
 
     assert.strictEqual(process.env.HOOK_MODULE_CALLED_WITH_FILE, fakeFile);
+  });
+
+  it('should call a hook function once when noIterateFiles is true', async () => {
+    const functionCalled: string[] = [];
+
+    const hookFunction = (options) => {
+      functionCalled.push(options.files);
+    };
+
+    await signWithHook({
+      files: ['my/fake/file1', 'my/fake/file2'],
+      hookFunction,
+      noIterateFiles: true
+    });
+
+    assert.deepStrictEqual(functionCalled, [['my/fake/file1', 'my/fake/file2']]);
   });
 });
