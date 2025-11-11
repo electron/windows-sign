@@ -1,14 +1,19 @@
-# @electron/windows-sign [![npm][npm_img]][npm_url]
+# @electron/windows-sign
+
+[![npm][npm_img]][npm_url]
+[![Test](https://github.com/electron/windows-sign/actions/workflows/test.yml/badge.svg)](https://github.com/electron/windows-sign/actions/workflows/test.yml)
+[![API docs](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fregistry.npmjs.org%2F%40electron%2Fwindows-sign%2Flatest&query=%24.version&logo=typescript&logoColor=white&label=API%20Docs)](https://packages.electronjs.org/windows-sign)
+
 
 Codesign your app for Windows. Made for [Electron][electron] but really supports any folder with binary files. `electron-windows-sign` scans a folder for [signable files](#file-types) and codesigns them with both SHA-1 and SHA-256. It can be highly customized and used either programmatically or on the command line. 
 
 This tool is particularly useful if you want to code sign Electron or other Windows binaries with an EV certificate or an HSM setup (like DigiCert KeyLocker, AWS CloudHSM, Azure Key Vault HSM, Google Cloud Key Management Service HSM, and other similar services). For more details on how you'd exactly do that, please see [Use with Cloud HSM Providers](#use-with-cloud-hsm-providers) below.
 
-# Requirements
+## Requirements
 
 By default, this module spawns `signtool.exe` and needs to run on Windows. If you're building an Electron app and care enough to codesign them, I would heavily recommend that you build and test your apps on the platforms you're building for.
 
-# Usage
+## Usage
 
 Most developers of Electron apps will likely not use this module directly - and instead use it indirectly
 instead. If you are one of those developers who is using a module like `@electron/forge` or `@electron/packager`, you can configure this module with global environment variables. If that describes
@@ -18,9 +23,11 @@ you, you can skip ahead to your use case:
  - [With a custom binary or custom parameters](#with-a-custom-signtoolexe-or-custom-parameters)
  - [With a completely custom hook](#with-a-custom-hook-function)
 
-## Direct Usage
+Full API usage is available on the [API documentation](http://packages.electronjs.org/windows-sign).
 
-`@electron/windows-codesign` is distributed as an ESM package and can be used both as a module as well as directly from the command line.
+### Direct Usage
+
+`@electron/windows-sign` is distributed as an ESM package and can be used both as a module as well as directly from the command line.
 
 ```ts
 import { sign } from "@electron/windows-sign"
@@ -32,7 +39,7 @@ await sign(signOptions)
 electron-windows-sign $PATH_TO_APP_DIRECTORY [options ...]
 ```
 
-## With a certificate file and password
+### With a certificate file and password
 
 This is the "traditional" way to codesign Electron apps on Windows. You pass in a certificate file
 (like a .pfx) and a password, which will then be passed to a built-in version of `signtool.exe` taken
@@ -52,7 +59,8 @@ await sign({
 electron-windows-sign $PATH_TO_APP_DIRECTORY --certificate-file=$PATH_TO_CERT --certificate-password=$CERT-PASSWORD
 ```
 
-### Full configuration
+#### Full configuration
+
 ```ts
 // Path to a timestamp server. Defaults to http://timestamp.digicert.com
 // Can also be passed as process.env.WINDOWS_TIMESTAMP_SERVER
@@ -69,7 +77,7 @@ signJavaScript = true
 hashes = ["sha256"]
 ```
 
-## With a custom signtool.exe or custom parameters
+### With a custom signtool.exe or custom parameters
 
 Sometimes, you need to specify specific signing parameters or use a different version
 of `signtool.exe`. In this mode, `@electron/windows-sign` will call the provided binary
@@ -99,7 +107,7 @@ await sign({
 electron-windows-sign $PATH_TO_APP_DIRECTORY --sign-tool-path=$PATH_TO_TOOL --sign-with-params="--my=custom --parameters"
 ```
 
-## With a custom hook function
+### With a custom hook function
 
 Sometimes, you just want all modules depending on `@electron/windows-sign` to call
 your completely custom logic. You can either specify a `hookFunction` (if you're calling
@@ -123,6 +131,7 @@ await sign({
 
 Your hook module should either directly export a function or
 export a `default` function.
+
 ```js
 // Good:
 module.exports = function (filePath) {
@@ -152,7 +161,7 @@ export async function myCustomHookName(filePath) {
 }
 ```
 
-```
+```text
 SYNOPSIS
   electron-windows-sign app [options ...]
 
@@ -197,7 +206,8 @@ DESCRIPTION
     Print additional debug information.
 ```
 
-# File Types
+## File Types
+
 This tool will aggressively attempt to sign all files that _can_
 be signed, excluding scripts.
 
@@ -213,13 +223,13 @@ If you do want to sign JavaScript, please enable it with the `signJavaScript`
 parameter. As far as we are aware, there are no benefits to signing
 JavaScript files, so we do not by default.
 
-# Use with Cloud HSM Providers
+## Use with Cloud HSM Providers
 
 Since 2023, Microsoft requires that Windows software be signed with an extended validation (EV) certificate in order to avoid a Windows Defender popup. This presents a challenge for developers who are used to building and signing in the cloud or some continuous integration setup like GitHub Actions, CircleCI, Travis CI, or AppVeyor because EV certificates require a Hardware Security Module (HSM). Or, in simpler words: If you want to code sign your Windows software so that your customers don't see a scary Windows Defender dialog, you need to code sign on a computer with a USB device plugged in. 
 
 The industry has an answer to this problem: Services like DigiCert KeyLocker, AWS CloudHSM, Azure Key Vault HSM, or Google Cloud Key Management Service HSM allow code signing binaries with an Extended Validation (EV) certificate from the cloud. `@electron/windows-sign` is compatible with all of these services. 
 
-## Custom signtool parameters
+### Custom signtool parameters
 
 Most services allow signing your code with Microsoft's `signtool.exe`. Let's take DigiCert KeyLocker as an example. [DigiCert's documentation](https://docs.digicert.com/en/digicert-keylocker/signing-tools/sign-authenticode-files-with-signtool-on-windows.html) explains the steps necessary to setup your signing machine. Once done, you can sign with the following call:
 
@@ -237,7 +247,7 @@ await sign({
 
 Both Google's and Amazon's solutions similarly allow you to sign with Microsoft's SignTool. Documentation for [Google can be found here](https://cloud.google.com/kms/docs/reference/cng-signtool), [Amazon's lives here](https://docs.aws.amazon.com/cloudhsm/latest/userguide/signtool.html). 
 
-## Custom signtool.exe
+### Custom signtool.exe
 
 Some providers provide drop-in replacements for `signtool.exe`. If that's the case, simply pass the path to that replacement:
 
@@ -248,11 +258,12 @@ await sign({
 })
 ```
 
-## Fully custom process
+### Fully custom process
 
 If your HSM provider has a more complex setup, you might have to call a custom file with custom parameters. If that's the case, use a hook function or hook module, which allows you to completely customize what to do with each file that `@electron/windows-sign` wants to sign. More documentation about this option can be found in the ["Signing with a custom hook function" section above](#with-a-custom-hook-function).
 
-# License
+## License
+
 BSD 2-Clause "Simplified". Please see LICENSE for details.
 
 [electron]: https://github.com/electron/electron
