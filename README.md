@@ -23,7 +23,7 @@ you, you can skip ahead to your use case:
  - [With a custom binary or custom parameters](#with-a-custom-signtoolexe-or-custom-parameters)
  - [With a completely custom hook](#with-a-custom-hook-function)
 
-Full API usage is available on the [API documentation](http://packages.electronjs.org/windows-sign).
+Full API usage is available on the [API documentation](https://packages.electronjs.org/windows-sign).
 
 ### Direct Usage
 
