@@ -40,11 +40,19 @@ async function getHookFunction(options: InternalHookOptions): Promise<HookFuncti
 export async function signWithHook(options: InternalSignOptions) {
   hookFunction = await getHookFunction(options);
 
-  for (const file of options.files) {
+  if (options.noIterateFiles) {
     try {
-      await hookFunction(file);
+      await hookFunction(options);
     } catch (error) {
-      log(`Error signing ${file}`, error);
+      log('Sign with hook failed.', error);
+    }
+  } else {
+    for (const file of options.files) {
+      try {
+        await hookFunction(file);
+      } catch (error) {
+        log(`Error signing ${file}`, error);
+      }
     }
   }
 }
