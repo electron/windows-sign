@@ -84,7 +84,7 @@ async function execute(options: InternalSignToolOptions) {
   });
 
   if (code !== 0) {
-    throw new Error(`Signtool exited with code ${code}. Stderr: ${stderr}. Stdout: ${stdout}`);
+    throw new Error(`Signtool exited with code ${code}.\nArgs: ${args.join(' ')}\nStderr: ${stderr}.\nStdout: ${stdout}`);
   }
 }
 
