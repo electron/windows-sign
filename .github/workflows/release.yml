@@ -5,9 +5,13 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
   test:
     uses: ./.github/workflows/test.yml
+    permissions:
+      contents: read
 
   release:
     name: Release
