@@ -5,14 +5,15 @@ on:
     tags:
       - v[0-9]+.[0-9]+.[0-9]+*
 
-permissions:
-    id-token: write
-    contents: read
+permissions: {}
 
 jobs:
   docs:
     runs-on: ubuntu-latest
     environment: docs-publish
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -20,8 +21,9 @@ jobs:
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: '.nvmrc'
+          package-manager-cache: false
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn --immutable
       - name: Build API documentation
         run: yarn build:docs
       - name: Azure login
