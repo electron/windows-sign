@@ -64,6 +64,9 @@
     "prepublishOnly": "yarn build",
     "prepare": "husky install"
   },
+  "resolutions": {
+    "@typescript-eslint/typescript-estree@npm:6.21.0/minimatch": "^9.0.7"
+  },
   "engines": {
     "node": ">=22.12.0"
   },
