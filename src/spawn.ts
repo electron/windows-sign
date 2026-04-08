@@ -23,7 +23,7 @@ export async function spawnPromise(
   const { spawn } = await import('node:child_process');
   const fork = spawn(name, args, options);
 
-  log(`Spawning ${name} with ${args}`);
+  log(`Spawning ${name} with ${args.join(', ')}`);
 
   let stdout = '';
   let stderr = '';

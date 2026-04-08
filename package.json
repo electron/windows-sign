@@ -41,17 +41,11 @@
     "@types/debug": "^4.1.10",
     "@types/graceful-fs": "^4.1.6",
     "@types/node": "~22.10.7",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.56.0",
-    "eslint-config-eslint": "^9.0.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.1.1",
     "husky": "^8.0.3",
     "lint-staged": "^16.3.2",
-    "prettier": "^3.5.3",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.18.1",
     "tsx": "^3.14.0",
     "typedoc": "~0.25.13",
     "typescript": "^5.2.2"
@@ -59,21 +53,18 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "typedoc",
-    "lint": "prettier --check src test && eslint --ext .ts,.mjs src bin test",
+    "lint": "oxlint && oxfmt --check",
     "test": "node --import tsx --test \"test/**/*.spec.ts\"",
     "prepublishOnly": "yarn build",
     "prepare": "husky install"
-  },
-  "resolutions": {
-    "@typescript-eslint/typescript-estree@npm:6.21.0/minimatch": "^9.0.7"
   },
   "engines": {
     "node": ">=22.12.0"
   },
   "lint-staged": {
     "*.{js,ts}": [
-      "prettier --write",
-      "eslint --fix"
+      "oxlint --fix",
+      "oxfmt"
     ]
   },
   "packageManager": "yarn@4.10.3+sha512.c38cafb5c7bb273f3926d04e55e1d8c9dfa7d9c3ea1f36a4868fa028b9e5f72298f0b7f401ad5eb921749eb012eb1c3bb74bf7503df3ee43fd600d14a018266f"

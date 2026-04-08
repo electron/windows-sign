@@ -3,8 +3,8 @@ import { describe, it } from 'node:test';
 
 import { signWithHook } from '../src/sign-with-hook.js';
 
-describe('sign with hook', async () => {
-  it('should call a hook function', async () => {
+void describe('sign with hook', async () => {
+  void it('should call a hook function', async () => {
     let hookCalled = false;
 
     const hookFunction = (filePath: string) => {
@@ -20,7 +20,7 @@ describe('sign with hook', async () => {
     assert.strictEqual(hookCalled, true);
   });
 
-  it('should call a async hook function', async () => {
+  void it('should call a async hook function', async () => {
     let hookCalled = false;
 
     const hookFunction = async (filePath: string) => {
@@ -42,7 +42,7 @@ describe('sign with hook', async () => {
     assert.strictEqual(hookCalled, true);
   });
 
-  it('should call a hook module', async () => {
+  void it('should call a hook module', async () => {
     const fakeFile = `my/fake/file/${Date.now()}`;
     await signWithHook({
       files: [fakeFile],

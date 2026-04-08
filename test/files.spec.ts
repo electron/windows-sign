@@ -4,8 +4,8 @@ import { describe, it } from 'node:test';
 
 import { getFilesToSign } from '../src/files.js';
 
-describe('files', async () => {
-  it('gets files to sign', () => {
+void describe('files', async () => {
+  void it('gets files to sign', () => {
     const files = getFilesToSign({
       appDirectory: path.resolve(import.meta.dirname, 'fixtures', 'app'),
     });
@@ -17,7 +17,7 @@ describe('files', async () => {
     assert.deepEqual(files, expectedFiles);
   });
 
-  it('gets files to sign (with JS files)', () => {
+  void it('gets files to sign (with JS files)', () => {
     const files = getFilesToSign({
       appDirectory: path.resolve(import.meta.dirname, 'fixtures', 'app'),
       signJavaScript: true,
