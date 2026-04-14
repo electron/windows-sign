@@ -65,7 +65,8 @@
     "prepare": "husky install"
   },
   "resolutions": {
-    "@typescript-eslint/typescript-estree@npm:6.21.0/minimatch": "^9.0.7"
+    "@typescript-eslint/typescript-estree@npm:6.21.0/minimatch": "^9.0.7",
+    "fsevents": "npm:@electron/fsevents@2.3.3-fork"
   },
   "engines": {
     "node": ">=22.12.0"
