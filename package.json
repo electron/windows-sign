@@ -59,6 +59,9 @@
     "prepublishOnly": "yarn build",
     "prepare": "husky install"
   },
+  "resolutions": {
+    "fsevents": "npm:@electron/fsevents@2.3.3-fork"
+  },
   "engines": {
     "node": ">=22.12.0"
   },
