@@ -54,6 +54,7 @@
     "build": "tsc",
     "build:docs": "typedoc",
     "lint": "oxlint && oxfmt --check",
+    "lint:fix": "oxlint --fix && oxfmt --write",
     "test": "node --import tsx --test \"test/**/*.spec.ts\"",
     "prepublishOnly": "yarn build",
     "prepare": "husky install"
