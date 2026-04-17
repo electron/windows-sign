@@ -15,9 +15,9 @@ const { values: args, positionals } = parseArgs({
     'sign-with-params': { type: 'string' },
     help: { type: 'boolean', short: 'h' },
     debug: { type: 'boolean' },
-    'automatically-select-certificate': { type: 'boolean', default: true }
+    'automatically-select-certificate': { type: 'boolean', default: true },
   },
-  allowPositionals: true
+  allowPositionals: true,
 });
 const usage = fs
   .readFileSync(path.join(import.meta.dirname, 'electron-windows-sign-usage.txt'))
@@ -34,7 +34,7 @@ if (!args.app || args.help) {
 // Remove excess arguments
 delete args.help;
 
-sign(args, function done(err) {
+void sign(args, function done(err) {
   if (err) {
     console.error('Sign failed:');
     if (err.message) console.error(err.message);
