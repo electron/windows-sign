@@ -51,4 +51,43 @@ void describe('sign with hook', async () => {
 
     assert.strictEqual(process.env.HOOK_MODULE_CALLED_WITH_FILE, fakeFile);
   });
+
+  void it('should throw an error from a hook function', async () => {
+    const hookFunction = (filePath: string) => {
+      throw new Error(`failed to sign ${filePath}`);
+    };
+
+    await assert.rejects(
+      signWithHook({
+        files: ['my/fake/file'],
+        hookFunction,
+      }),
+      /failed to sign my\/fake\/file/,
+    );
+  });
+
+  void it('should throw an error from an async hook function', async () => {
+    const hookFunction = async (filePath: string) => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      throw new Error(`failed to sign ${filePath}`);
+    };
+
+    await assert.rejects(
+      signWithHook({
+        files: ['my/fake/file'],
+        hookFunction,
+      }),
+      /failed to sign my\/fake\/file/,
+    );
+  });
+
+  void it('should throw an error from a hook module', async () => {
+    await assert.rejects(
+      signWithHook({
+        files: ['my/fake/file'],
+        hookModulePath: './test/fixtures/hook-module-error.js',
+      }),
+      /failed to sign my\/fake\/file/,
+    );
+  });
 });
