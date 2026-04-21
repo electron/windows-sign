@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { HookFunction, InternalHookOptions, InternalSignOptions } from './types.js';
-import { log } from './utils/log.js';
 
 let hookFunction: HookFunction;
 
@@ -41,10 +40,6 @@ export async function signWithHook(options: InternalSignOptions) {
   hookFunction = await getHookFunction(options);
 
   for (const file of options.files) {
-    try {
-      await hookFunction(file);
-    } catch (error) {
-      log(`Error signing ${file}`, error);
-    }
+    await hookFunction(file);
   }
 }
