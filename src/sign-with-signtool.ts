@@ -62,7 +62,11 @@ function getSigntoolArgs(options: InternalSignToolOptions) {
       extraArgs.push(...options.signWithParams);
     } else {
       // Split up at spaces and doublequotes
-      extraArgs.push(...(options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>));
+      extraArgs.push(
+        ...[...options.signWithParams.matchAll(/(?:([^\s"]+)|"([^"]*)")+/g)].map(
+          (matched) => matched[1] || matched[2],
+        ),
+      );
     }
 
     log('Parsed signWithParams as:', extraArgs);
