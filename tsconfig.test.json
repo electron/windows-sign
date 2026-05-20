@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "es2022",
+    "lib": ["es2023"],
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": false,
+    "types": ["node"],
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {}
+  },
+  "include": [
+    "ambient.d.ts",
+    "src/**/*.test.ts",
+    "src/**/*.ts"
+  ]
+}
