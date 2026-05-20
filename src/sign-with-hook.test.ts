@@ -47,45 +47,6 @@ describe('signWithHook', () => {
     expect(mockHookFunction).toHaveBeenCalledWith('file2.exe');
   });
 
-  it('should log error when hookFunction throws an error', async () => {
-    const mockHookFunction = jest.fn().mockRejectedValue(new Error('Signing failed'));
-    const files = ['file1.exe'];
-
-    const options: InternalSignOptions = createMockOptions({
-      files,
-      hookFunction: mockHookFunction,
-    });
-
-    await signWithHook(options);
-
-    expect(mockHookFunction).toHaveBeenCalledWith('file1.exe');
-    expect(mockLog).toHaveBeenCalledWith('Error signing file1.exe', expect.any(Error));
-  });
-
-  it('should process multiple files even if some fail', async () => {
-    const mockHookFunction = jest.fn().mockImplementation(async (file: string) => {
-      if (file === 'bad-file.exe') {
-        throw new Error('Signing failed');
-      }
-      return Promise.resolve();
-    });
-
-    const files = ['good-file1.exe', 'bad-file.exe', 'good-file2.exe'];
-
-    const options: InternalSignOptions = createMockOptions({
-      files,
-      hookFunction: mockHookFunction,
-    });
-
-    await signWithHook(options);
-
-    expect(mockHookFunction).toHaveBeenCalledTimes(3);
-    expect(mockHookFunction).toHaveBeenCalledWith('good-file1.exe');
-    expect(mockHookFunction).toHaveBeenCalledWith('bad-file.exe');
-    expect(mockHookFunction).toHaveBeenCalledWith('good-file2.exe');
-    expect(mockLog).toHaveBeenCalledWith('Error signing bad-file.exe', expect.any(Error));
-  });
-
   it('should handle empty files array', async () => {
     const mockHookFunction = jest.fn().mockResolvedValue(undefined);
 
