@@ -2,10 +2,7 @@
  * SHA-1 has been deprecated on Windows since 2016. We'll still dualsign.
  * https://social.technet.microsoft.com/wiki/contents/articles/32288.windows-enforcement-of-sha1-certificates.aspx#Post-February_TwentySeventeen_Plan
  */
-export const enum HASHES {
-  sha1 = 'sha1',
-  sha256 = 'sha256',
-}
+export type HASHES = 'sha1' | 'sha256';
 
 /**
  * Signing can be either by specifying a directory of files to sign.
