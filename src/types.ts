@@ -117,6 +117,13 @@ export interface OptionalSignToolOptions {
    * Hash algorithms to use for signing.
    */
   hashes?: HASHES[];
+  /**
+   * Do not populate parameters being passed to `signtool.exe`. Rely completely on {@link signWithParams}.
+   * 
+   * @defaultValue false
+   */
+  noDefaultParams?: boolean,
+
 }
 
 /**
