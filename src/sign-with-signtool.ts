@@ -3,7 +3,64 @@ import { log } from './utils/log.js';
 import { spawnPromise } from './spawn.js';
 import { HASHES, InternalSignOptions, InternalSignToolOptions } from './types.js';
 
-function getSigntoolArgs(options: InternalSignToolOptions) {
+/**
+ * Tokenizes a `signWithParams` string into an array of arguments, the way a
+ * shell would, so the resulting tokens can be passed verbatim to `signtool.exe`
+ * (which is spawned without a shell to strip quotes).
+ *
+ * Tokens are split on whitespace, but double-quoted spans are kept together and
+ * the surrounding double-quotes are stripped. This lets values that contain
+ * spaces be expressed via quoting, e.g.:
+ *
+ *   `/n "My Awesome Company"` -> `['/n', 'My Awesome Company']`
+ *
+ * Behavior:
+ * - Unquoted tokens are passed through unchanged.
+ * - Runs of whitespace collapse; no empty tokens are produced from gaps.
+ * - Leading/trailing whitespace is trimmed.
+ * - An explicitly empty quoted value (`""`) yields a single empty-string token.
+ *
+ * Regression coverage for https://github.com/electron/windows-sign/issues/45
+ */
+export function parseSignWithParams(input: string): Array<string> {
+  const tokens: Array<string> = [];
+  let current = '';
+  let inToken = false;
+  let inQuotes = false;
+
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i];
+
+    if (char === '"') {
+      // Toggle quote mode. Entering quotes starts a token even if the quoted
+      // value is empty (so `""` becomes a single empty-string token).
+      inQuotes = !inQuotes;
+      inToken = true;
+      continue;
+    }
+
+    if (!inQuotes && /\s/.test(char)) {
+      // Whitespace outside quotes terminates the current token (if any).
+      if (inToken) {
+        tokens.push(current);
+        current = '';
+        inToken = false;
+      }
+      continue;
+    }
+
+    current += char;
+    inToken = true;
+  }
+
+  if (inToken) {
+    tokens.push(current);
+  }
+
+  return tokens;
+}
+
+export function getSigntoolArgs(options: InternalSignToolOptions) {
   // See the following url for docs
   // https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
   const { certificateFile, certificatePassword, hash, timestampServer } = options;
@@ -59,10 +116,13 @@ function getSigntoolArgs(options: InternalSignToolOptions) {
     const extraArgs: Array<string> = [];
 
     if (Array.isArray(options.signWithParams)) {
+      // The array form is a verbatim passthrough - each entry is already a
+      // discrete argument, so we must not re-parse or strip quotes from it.
       extraArgs.push(...options.signWithParams);
     } else {
-      // Split up at spaces and doublequotes
-      extraArgs.push(...(options.signWithParams.match(/(?:[^\s"]+|"[^"]*")+/g) as Array<string>));
+      // Split up at spaces, keeping double-quoted spans together and stripping
+      // the surrounding quotes (see parseSignWithParams).
+      extraArgs.push(...parseSignWithParams(options.signWithParams));
     }
 
     log('Parsed signWithParams as:', extraArgs);
