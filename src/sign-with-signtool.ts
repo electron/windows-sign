@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { log } from './utils/log.js';
 import { spawnPromise } from './spawn.js';
-import { InternalSignOptions, InternalSignToolOptions } from './types.js';
+import { HASHES, InternalSignOptions, InternalSignToolOptions } from './types.js';
 
 function getSigntoolArgs(options: InternalSignToolOptions) {
   // See the following url for docs
@@ -20,7 +20,7 @@ function getSigntoolArgs(options: InternalSignToolOptions) {
   }
 
   // Timestamp
-  if (hash === 'sha256') {
+  if (hash === HASHES.sha256) {
     args.push('/tr', timestampServer);
     args.push('/td', hash);
   } else {
@@ -125,14 +125,16 @@ export async function signWithSignTool(options: InternalSignOptions) {
   };
 
   const hashes =
-    options.hashes == null || options.hashes.length === 0 ? ['sha1', 'sha256'] : options.hashes;
+    options.hashes == null || options.hashes.length === 0
+      ? [HASHES.sha1, HASHES.sha256]
+      : options.hashes;
 
-  if (hashes.includes('sha1')) {
-    await execute({ ...internalOptions, hash: 'sha1' });
+  if (hashes.includes(HASHES.sha1)) {
+    await execute({ ...internalOptions, hash: HASHES.sha1 });
     // If we signed with SHA1, we need to append the SHA256 signature:
     internalOptions.appendSignature = true;
   }
-  if (hashes.includes('sha256')) {
-    await execute({ ...internalOptions, hash: 'sha256' });
+  if (hashes.includes(HASHES.sha256)) {
+    await execute({ ...internalOptions, hash: HASHES.sha256 });
   }
 }
