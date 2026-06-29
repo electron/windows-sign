@@ -109,6 +109,22 @@ void describe('getSigntoolArgs signWithParams handling', async () => {
     assert.ok(!args.includes('"DigiCert Signing Manager KSP"'));
   });
 
+  // Regression test for https://github.com/electron/windows-sign/issues/46:
+  // when the user supplies /tr, /td, or /fd via signWithParams, getSigntoolArgs
+  // must not also append its own defaults, or signtool.exe errors on the
+  // duplicate flags. The user-supplied value wins.
+  void it('does not duplicate /tr, /td, or /fd when supplied via signWithParams (issue #46)', () => {
+    const args = getSigntoolArgs({
+      ...baseOptions,
+      signWithParams:
+        '/tr http://my.timestamp.example /td sha384 /fd sha384 /csp "My Provider" /kc alias',
+    });
+
+    assert.strictEqual(args.filter((arg) => arg === '/tr').length, 1);
+    assert.strictEqual(args.filter((arg) => arg === '/td').length, 1);
+    assert.strictEqual(args.filter((arg) => arg === '/fd').length, 1);
+  });
+
   void it('passes the array form through verbatim without re-parsing or stripping quotes', () => {
     // An array entry that itself contains quotes/spaces must stay intact.
     const verbatim = ['/csp', 'DigiCert Signing Manager KSP', '/literal', '"keep these quotes"'];

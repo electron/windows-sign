@@ -66,6 +66,25 @@ export function getSigntoolArgs(options: InternalSignToolOptions) {
   const { certificateFile, certificatePassword, hash, timestampServer } = options;
   const args = ['sign'];
 
+  // Parse signWithParams up front so we can avoid appending defaults for any
+  // flag the user already supplied. Passing e.g. /tr or /fd twice makes
+  // signtool.exe error on the duplicate. See issue #46.
+  let extraArgs: Array<string> = [];
+  if (options.signWithParams) {
+    if (Array.isArray(options.signWithParams)) {
+      // The array form is a verbatim passthrough - each entry is already a
+      // discrete argument, so we must not re-parse or strip quotes from it.
+      extraArgs = [...options.signWithParams];
+    } else {
+      // Split up at spaces, keeping double-quoted spans together and stripping
+      // the surrounding quotes (see parseSignWithParams).
+      extraArgs = parseSignWithParams(options.signWithParams);
+    }
+    log('Parsed signWithParams as:', extraArgs);
+  }
+
+  const hasUserFlag = (flag: string) => extraArgs.includes(flag);
+
   // Automatically select cert
   if (options.automaticallySelectCertificate) {
     args.push('/a');
@@ -78,8 +97,12 @@ export function getSigntoolArgs(options: InternalSignToolOptions) {
 
   // Timestamp
   if (hash === HASHES.sha256) {
-    args.push('/tr', timestampServer);
-    args.push('/td', hash);
+    if (!hasUserFlag('/tr')) {
+      args.push('/tr', timestampServer);
+    }
+    if (!hasUserFlag('/td')) {
+      args.push('/td', hash);
+    }
   } else {
     args.push('/t', timestampServer);
   }
@@ -95,7 +118,9 @@ export function getSigntoolArgs(options: InternalSignToolOptions) {
   }
 
   // Hash
-  args.push('/fd', hash);
+  if (!hasUserFlag('/fd')) {
+    args.push('/fd', hash);
+  }
 
   // Description
   if (options.description) {
@@ -112,21 +137,7 @@ export function getSigntoolArgs(options: InternalSignToolOptions) {
     args.push('/debug');
   }
 
-  if (options.signWithParams) {
-    const extraArgs: Array<string> = [];
-
-    if (Array.isArray(options.signWithParams)) {
-      // The array form is a verbatim passthrough - each entry is already a
-      // discrete argument, so we must not re-parse or strip quotes from it.
-      extraArgs.push(...options.signWithParams);
-    } else {
-      // Split up at spaces, keeping double-quoted spans together and stripping
-      // the surrounding quotes (see parseSignWithParams).
-      extraArgs.push(...parseSignWithParams(options.signWithParams));
-    }
-
-    log('Parsed signWithParams as:', extraArgs);
-
+  if (extraArgs.length > 0) {
     args.push(...extraArgs);
   }
 
