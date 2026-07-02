@@ -245,6 +245,14 @@ await sign({
 })
 ```
 
+Hardware tokens and cloud HSM services that install their certificate into the Windows certificate store — such as Certum's SimplySign — let you sign by referencing the certificate's SHA1 thumbprint instead of a `.pfx` file. In that case you don't provide a `certificateFile` or `certificatePassword` at all; you pass the thumbprint (and timestamp settings) through `signWithParams`:
+
+```js
+await sign({
+  signWithParams: "/sha1 <thumbprint> /tr http://timestamp.example /td sha256 /fd sha256"
+})
+```
+
 Both Google's and Amazon's solutions similarly allow you to sign with Microsoft's SignTool. Documentation for [Google can be found here](https://cloud.google.com/kms/docs/reference/cng-signtool), [Amazon's lives here](https://docs.aws.amazon.com/cloudhsm/latest/userguide/signtool.html). 
 
 ### Custom signtool.exe
