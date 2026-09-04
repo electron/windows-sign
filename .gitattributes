@@ -1,3 +1,4 @@
 * text=auto eol=crlf
 .husky/* text=auto eol=lf
 yarn.lock text eol=lf
+vendor/** binary

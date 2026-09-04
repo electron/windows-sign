@@ -43,7 +43,8 @@ electron-windows-sign $PATH_TO_APP_DIRECTORY [options ...]
 
 This is the "traditional" way to codesign Electron apps on Windows. You pass in a certificate file
 (like a .pfx) and a password, which will then be passed to a built-in version of `signtool.exe` taken
-directly from the Windows SDK. 
+directly from the Windows SDK. The built-in `signtool.exe` is the x64 build from Windows SDK 10.0.26100.9169,
+which meets the minimum version (10.0.22621.755 or later) required by Azure Trusted Signing (`/dlib`).
 
 ```ts
 await sign({
